@@ -1,0 +1,32 @@
+services:
+  # PHP container based in Dockerfile
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: unip-extension-api
+    container_name: unip-extension-api-app
+    restart: unless-stopped
+    working_dir: /var/www
+    volumes:
+      - .:/var/www
+    networks:
+        - unip-network
+
+  # NGINX
+  nginx:
+    image: nginx:alpine
+    container_name: unip-nginx-container
+    restart: unless-stopped
+    ports:
+      - "8000:80"
+    volumes:
+      - .:/var/www
+      - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf
+    networks:
+      - unip-network
+
+# ====> Networks <====
+networks:
+  unip-network:
+    driver: bridge
