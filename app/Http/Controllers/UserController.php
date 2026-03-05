@@ -6,7 +6,7 @@ use App\DTO\User\CreateUserDTO;
 use App\Http\Requests\User\CreateUserFormRequest;
 use App\Http\Resources\UserResource;
 use App\Models\User;
-use App\Services\UserService;
+use App\Services\User\UserService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
