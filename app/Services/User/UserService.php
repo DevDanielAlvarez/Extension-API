@@ -9,8 +9,13 @@ use Illuminate\Database\Eloquent\Model;
 class UserService
 {
     public function __construct(
-        protected Model $model
+        protected Model $record
     ) {}
+
+    public function getRecord(): Model
+    {
+        return $this->record;
+    }
 
     public static function create(CreateUserDTO $dtoToCreate): static
     {

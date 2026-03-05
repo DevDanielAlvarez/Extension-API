@@ -2,7 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\DTO\User\CreateUserDTO;
+use App\Http\Requests\User\CreateUserFormRequest;
+use App\Http\Resources\UserResource;
+use App\Models\User;
+use App\Services\UserService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class UserController extends Controller
 {
@@ -11,23 +17,25 @@ class UserController extends Controller
      */
     public function index()
     {
-        //
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
+        return UserResource::collection(User::paginate(10));
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(CreateUserFormRequest $request)
     {
-        //
+        $validatedData = $request->validated();
+        DB::transaction(function () use ($validatedData) {
+            $dtoToCreate = new CreateUserDTO(
+                name: $validatedData['name'],
+                documentType: $validatedData['document_type'],
+                documentNumber: $validatedData['document_number'],
+                password: $validatedData['password']
+            );
+            $userService = UserService::create($dtoToCreate);
+            return new UserResource($userService->getRecord());
+        });
     }
 
     /**
