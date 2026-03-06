@@ -2,9 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\DTO\User\CreateUserDTO;
 use App\Http\Requests\LoginFormRequest;
+use App\Http\Requests\User\CreateUserFormRequest;
 use App\Http\Resources\UserResource;
 use App\Models\User;
+use App\Services\User\UserService;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 
@@ -35,5 +39,28 @@ class AuthController extends Controller
             ]);
     }
 
-    public function register() {}
+    public function register(CreateUserFormRequest $request): JsonResponse
+    {
+        // Get validated data
+        $validatedData = $request->validated();
+        // Create a dto using validated data
+        $userDto = new CreateUserDTO(
+            name: $validatedData['name'],
+            documentType: $validatedData['document_type'],
+            documentNumber: $validatedData['document_number'],
+            password: $validatedData['password']
+
+        );
+        // Create a user using validated data
+        $user = UserService::create($userDto);
+        // Create token to created user
+        $token = $user->getRecord()->createToken('auth_token')->plainTextToken;
+        // Return a json response with the user created
+        return response()->json([
+            'message' => 'User Registred successfully',
+            'user' => UserResource::make($user->getRecord()),
+            'token' => $token,
+            'token_type' => 'Bearer'
+        ]);
+    }
 }
