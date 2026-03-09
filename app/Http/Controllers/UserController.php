@@ -43,7 +43,8 @@ class UserController extends Controller
      */
     public function show(string $id)
     {
-        //
+        $user = UserService::find($id);
+        return UserResource::make($user->getRecord());
     }
 
     /**
