@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Enums\DocumentTypeEnum;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
@@ -23,22 +24,16 @@ class UserFactory extends Factory
      */
     public function definition(): array
     {
+        $documentType = fake()->randomElement([DocumentTypeEnum::CPF->value, DocumentTypeEnum::CNPJ->value]);
+        
         return [
             'name' => fake()->name(),
-            'email' => fake()->unique()->safeEmail(),
-            'email_verified_at' => now(),
+            'document_type' => $documentType,
+            'document_number' => $documentType === DocumentTypeEnum::CPF->value 
+                ? fake()->numerify('###########') // 11 digits for CPF
+                : fake()->numerify('##############'), // 14 digits for CNPJ
             'password' => static::$password ??= Hash::make('password'),
             'remember_token' => Str::random(10),
         ];
-    }
-
-    /**
-     * Indicate that the model's email address should be unverified.
-     */
-    public function unverified(): static
-    {
-        return $this->state(fn (array $attributes) => [
-            'email_verified_at' => null,
-        ]);
     }
 }

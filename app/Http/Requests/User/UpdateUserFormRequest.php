@@ -8,7 +8,7 @@ use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Enum;
 use Illuminate\Validation\Rules\Password;
 
-class CreateUserFormRequest extends FormRequest
+class UpdateUserFormRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -33,9 +33,10 @@ class CreateUserFormRequest extends FormRequest
                 'string',
                 'max:255',
                 Rule::unique('users', 'document_number')
-                    ->where('document_type', $this->input('document_type')),
+                    ->where('document_type', $this->input('document_type'))
+                    ->ignore($this->user()->id),
             ],
-            'password' => ['required', 'string', 'confirmed', Password::min(8)->symbols()],
+            'password' => ['nullable', 'string', Password::min(8)->symbols()],
         ];
     }
 }
