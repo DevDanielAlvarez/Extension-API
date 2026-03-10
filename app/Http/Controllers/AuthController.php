@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\DTO\User\CreateUserDTO;
+use App\Enums\DocumentTypeEnum;
 use App\Http\Requests\LoginFormRequest;
 use App\Http\Requests\User\CreateUserFormRequest;
 use App\Http\Resources\UserResource;
@@ -33,9 +34,11 @@ class AuthController extends Controller
         return response()
             ->json([
                 'message' => 'Login successfully',
-                'user' => UserResource::make($user),
-                'token' => $token,
-                'token_type' => 'Bearer'
+                'data' => [
+                    'user' => UserResource::make($user),
+                    'token' => $token,
+                    'token_type' => 'Bearer'
+                ]
             ]);
     }
 
@@ -46,8 +49,8 @@ class AuthController extends Controller
         // Create a dto using validated data
         $userDto = new CreateUserDTO(
             name: $validatedData['name'],
-            documentType: $validatedData['document_type'],
-            documentNumber: $validatedData['document_number'],
+            document_type: DocumentTypeEnum::from($validatedData['document_type']),
+            document_number: $validatedData['document_number'],
             password: $validatedData['password']
 
         );
@@ -58,9 +61,11 @@ class AuthController extends Controller
         // Return a json response with the user created
         return response()->json([
             'message' => 'User Registred successfully',
-            'user' => UserResource::make($user->getRecord()),
-            'token' => $token,
-            'token_type' => 'Bearer'
-        ]);
+            'data' => [
+                'user' => UserResource::make($user->getRecord()),
+                'token' => $token,
+                'token_type' => 'Bearer'
+            ]
+        ], 201);
     }
 }
