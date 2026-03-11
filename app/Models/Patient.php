@@ -6,6 +6,7 @@ use App\Enums\DocumentTypeEnum;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Patient extends Model
 {
@@ -28,4 +29,9 @@ class Patient extends Model
         'document_type' => DocumentTypeEnum::class,
         'nursing_report' => 'array',
     ];
+
+    public function responsibles(): BelongsToMany
+    {
+        return $this->belongsToMany(Responsible::class);
+    }
 }

@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Enums\DocumentTypeEnum;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Responsible extends Model
 {
@@ -21,4 +22,9 @@ class Responsible extends Model
     protected $casts = [
         'document_type' => DocumentTypeEnum::class,
     ];
+
+    public function patients(): BelongsToMany
+    {
+        return $this->belongsToMany(Patient::class);
+    }
 }
