@@ -22,3 +22,8 @@ Route::apiResource('patients', PatientController::class);
 Route::apiResource('responsibles', ResponsibleController::class);
 Route::apiResource('medicines', MedicineController::class);
 
+Route::post('patients/{patient}/responsibles/{responsible}', [PatientController::class, 'attachResponsible']);
+Route::post('responsibles/{responsible}/patients/{patient}', [ResponsibleController::class, 'attachPatient']);
+Route::delete('patients/{patient}/responsibles/{responsible}', [PatientController::class, 'detachResponsible']);
+Route::delete('responsibles/{responsible}/patients/{patient}', [ResponsibleController::class, 'detachPatient']);
+

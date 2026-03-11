@@ -10,6 +10,7 @@ use App\Http\Requests\Patient\UpdatePatientFormRequest;
 use App\Http\Resources\PatientResource;
 use App\Models\Patient;
 use App\Services\Patient\PatientService;
+use App\Services\Responsible\ResponsibleService;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 
@@ -73,6 +74,26 @@ class PatientController extends Controller
         });
 
         return $result;
+    }
+
+    public function attachResponsible(string $patient, string $responsible)
+    {
+        $patientService = PatientService::find($patient);
+        ResponsibleService::find($responsible);
+
+        $patientService->getRecord()->responsibles()->syncWithoutDetaching([$responsible]);
+
+        return response()->noContent();
+    }
+
+    public function detachResponsible(string $patient, string $responsible)
+    {
+        $patientService = PatientService::find($patient);
+        ResponsibleService::find($responsible);
+
+        $patientService->getRecord()->responsibles()->detach($responsible);
+
+        return response()->noContent();
     }
 
 }

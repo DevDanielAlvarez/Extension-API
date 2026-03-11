@@ -12,7 +12,7 @@ return new class extends Migration {
     {
         Schema::create('patient_responsible', function (Blueprint $table) {
             $table->foreignUlid('patient_id')->constrained('patients')->cascadeOnDelete();
-            $table->foreignId('responsible_id')->constrained('responsibles')->cascadeOnDelete();
+            $table->foreignUlid('responsible_id')->constrained('responsibles')->cascadeOnDelete();
 
             $table->primary(['patient_id', 'responsible_id']);
         });

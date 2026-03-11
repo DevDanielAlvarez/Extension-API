@@ -9,6 +9,7 @@ use App\Http\Requests\Responsible\CreateResponsibleFormRequest;
 use App\Http\Requests\Responsible\UpdateResponsibleFormRequest;
 use App\Http\Resources\ResponsibleResource;
 use App\Models\Responsible;
+use App\Services\Patient\PatientService;
 use App\Services\Responsible\ResponsibleService;
 use Illuminate\Support\Facades\DB;
 
@@ -72,6 +73,26 @@ class ResponsibleController extends Controller
     {
         $responsibleService = ResponsibleService::find($responsible);
         $responsibleService->delete();
+
+        return response()->noContent();
+    }
+
+    public function attachPatient(string $responsible, string $patient)
+    {
+        $responsibleService = ResponsibleService::find($responsible);
+        PatientService::find($patient);
+
+        $responsibleService->getRecord()->patients()->syncWithoutDetaching([$patient]);
+
+        return response()->noContent();
+    }
+
+    public function detachPatient(string $responsible, string $patient)
+    {
+        $responsibleService = ResponsibleService::find($responsible);
+        PatientService::find($patient);
+
+        $responsibleService->getRecord()->patients()->detach($patient);
 
         return response()->noContent();
     }
