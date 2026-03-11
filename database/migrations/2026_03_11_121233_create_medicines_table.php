@@ -10,15 +10,16 @@ return new class extends Migration {
      */
     public function up(): void
     {
-        Schema::create('responsibles', function (Blueprint $table) {
+        Schema::create('medicines', function (Blueprint $table) {
             $table->ulid('id')->primary();
             $table->string('name');
-            $table->string('document_type');
-            $table->string('document_number');
-            $table->string('phone')->nullable();
+            $table->integer('content_quantity');
+            $table->string('content_unit'); // enum
+            $table->string('strength');
+            $table->boolean('is_compounded')->default(false);
+            $table->string('route_of_administration'); // enum
+            $table->text('additional_information')->nullable();
             $table->timestamps();
-
-            $table->unique(['document_type', 'document_number']);
         });
     }
 
@@ -27,6 +28,6 @@ return new class extends Migration {
      */
     public function down(): void
     {
-        Schema::dropIfExists('responsibles');
+        Schema::dropIfExists('medicines');
     }
 };

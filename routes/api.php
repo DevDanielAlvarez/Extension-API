@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\MedicineController;
 use App\Http\Controllers\PatientController;
 use App\Http\Controllers\ResponsibleController;
 use App\Http\Controllers\UserController;
@@ -19,3 +20,5 @@ Route::prefix('auth')->group(function () {
 Route::apiResource('users', UserController::class);
 Route::apiResource('patients', PatientController::class);
 Route::apiResource('responsibles', ResponsibleController::class);
+Route::apiResource('medicines', MedicineController::class);
+
