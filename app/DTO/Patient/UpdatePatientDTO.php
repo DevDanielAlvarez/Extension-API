@@ -6,9 +6,10 @@ use Alvarez\ConcreteDto\AbstractDTO;
 use App\Enums\DocumentTypeEnum;
 use Carbon\Carbon;
 
-class CreatePatientDTO extends AbstractDTO
+class UpdatePatientDTO extends AbstractDTO
 {
     public function __construct(
+        public readonly string $id,
         public readonly string $name,
         public readonly DocumentTypeEnum $document_type,
         public readonly string $document_number,
