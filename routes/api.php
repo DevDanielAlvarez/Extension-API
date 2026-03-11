@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\PatientController;
+use App\Http\Controllers\ResponsibleController;
 use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -17,3 +18,4 @@ Route::prefix('auth')->group(function () {
 
 Route::apiResource('users', UserController::class);
 Route::apiResource('patients', PatientController::class);
+Route::apiResource('responsibles', ResponsibleController::class);
