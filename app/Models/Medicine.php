@@ -7,6 +7,7 @@ use App\Enums\RouteOfAdministrationEnum;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Medicine extends Model
 {
@@ -28,4 +29,9 @@ class Medicine extends Model
         'route_of_administration' => RouteOfAdministrationEnum::class,
         'is_compounded' => 'boolean',
     ];
+
+    public function prescriptions(): HasMany
+    {
+        return $this->hasMany(Prescription::class);
+    }
 }
