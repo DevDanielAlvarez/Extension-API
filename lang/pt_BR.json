@@ -196,5 +196,11 @@
   "Enter your email and password below to log in": "Digite seu e-mail e senha abaixo para entrar",
   "Don't have an account?": "Não tem uma conta?",
   "Document type" : "Tipo de documento",
-  "Document number" : "Número do documento"
+  "Document number" : "Número do documento",
+  "Admission date" : "Data de admissão",
+  "Birthday": "Data de nascimento",
+  "Phone": "Telefone",
+  "Created at": "Criado em",
+  "Updated at": "Atualizado em",
+  "Nursing report": "Relatório de enfermagem"
 }

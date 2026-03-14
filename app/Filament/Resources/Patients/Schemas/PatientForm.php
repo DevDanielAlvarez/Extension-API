@@ -16,19 +16,26 @@ class PatientForm
         return $schema
             ->components([
                 TextInput::make('name')
+                    ->translateLabel()
                     ->required(),
                 Select::make('document_type')
+                    ->translateLabel()
                     ->options(DocumentTypeEnum::class)
                     ->required(),
                 TextInput::make('document_number')
+                    ->translateLabel()
                     ->required(),
                 DatePicker::make('admission_date')
+                    ->translateLabel()
                     ->required(),
                 DatePicker::make('birthday')
+                    ->translateLabel()
                     ->required(),
                 TextInput::make('phone')
+                    ->translateLabel()
                     ->tel(),
                 Textarea::make('nursing_report')
+                    ->translateLabel()
                     ->columnSpanFull(),
             ]);
     }

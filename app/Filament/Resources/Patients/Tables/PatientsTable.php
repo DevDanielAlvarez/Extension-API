@@ -14,29 +14,34 @@ class PatientsTable
     {
         return $table
             ->columns([
-                TextColumn::make('id')
-                    ->label('ID')
-                    ->searchable(),
                 TextColumn::make('name')
+                    ->translateLabel()
                     ->searchable(),
                 TextColumn::make('document_type')
+                    ->translateLabel()
                     ->badge()
                     ->searchable(),
                 TextColumn::make('document_number')
+                    ->translateLabel()
                     ->searchable(),
                 TextColumn::make('admission_date')
+                    ->translateLabel()
                     ->date()
                     ->sortable(),
                 TextColumn::make('birthday')
+                    ->translateLabel()
                     ->date()
                     ->sortable(),
                 TextColumn::make('phone')
+                    ->translateLabel()
                     ->searchable(),
                 TextColumn::make('created_at')
+                    ->translateLabel()
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('updated_at')
+                    ->translateLabel()
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
