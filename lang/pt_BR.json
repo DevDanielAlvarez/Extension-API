@@ -202,5 +202,11 @@
   "Phone": "Telefone",
   "Created at": "Criado em",
   "Updated at": "Atualizado em",
-  "Nursing report": "Relatório de enfermagem"
+  "Nursing report": "Relatório de enfermagem",
+  "Content quantity": "Quantidade",
+  "Content unit": "Unidade de conteúdo",
+  "Strength" : "Concentração",
+  "Route of administration": "Via de administração",
+  "Additional information": "Informações adicionais",
+  "Is compounded": "É manipulado"
 }
