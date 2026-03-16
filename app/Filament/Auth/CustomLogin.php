@@ -9,6 +9,7 @@ use Filament\Auth\Pages\Login;
 use Filament\Facades\Filament;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
+use Filament\Notifications\Notification;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
 use Illuminate\Support\Facades\Hash;
@@ -40,10 +41,20 @@ class CustomLogin extends Login
             ->first();
 
         if (!$user) {
+            Notification::make()
+                ->title('Credenciais inválidas')
+                ->body('O documento ou a senha estão incorretos.')
+                ->danger()
+                ->send();
             return null;
         }
 
         if (!Hash::check($data['password'], $user->password)) {
+            Notification::make()
+                ->title('Credenciais inválidas')
+                ->body('O documento ou a senha estão incorretos.')
+                ->danger()
+                ->send();
             return null;
         }
 
