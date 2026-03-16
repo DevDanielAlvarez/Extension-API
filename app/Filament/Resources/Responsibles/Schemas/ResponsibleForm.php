@@ -40,6 +40,7 @@ class ResponsibleForm
                         TextInput::make('phone')
                             ->translateLabel()
                             ->tel()
+                            ->columnSpanFull()
                             ->placeholder('Ex.: (11) 99999-9999')
                             ->maxLength(30),
                     ]),

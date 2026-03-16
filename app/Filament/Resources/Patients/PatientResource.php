@@ -5,6 +5,7 @@ namespace App\Filament\Resources\Patients;
 use App\Filament\Resources\Patients\Pages\CreatePatient;
 use App\Filament\Resources\Patients\Pages\EditPatient;
 use App\Filament\Resources\Patients\Pages\ListPatients;
+use App\Filament\Resources\Patients\RelationManagers\ResponsiblesRelationManager;
 use App\Filament\Resources\Patients\Schemas\PatientForm;
 use App\Filament\Resources\Patients\Tables\PatientsTable;
 use App\Models\Patient;
@@ -35,7 +36,7 @@ class PatientResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            ResponsiblesRelationManager::class
         ];
     }
 
