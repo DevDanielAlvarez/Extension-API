@@ -5,8 +5,11 @@ namespace App\Filament\Resources\Patients\RelationManagers;
 use App\Filament\Resources\Responsibles\ResponsibleResource;
 use App\Filament\Resources\Responsibles\Schemas\ResponsibleForm;
 use Filament\Actions\Action;
+use Filament\Actions\AttachAction;
 use Filament\Actions\CreateAction;
+use Filament\Actions\DetachAction;
 use Filament\Forms\Components\TextInput;
+use Filament\Notifications\Notification;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Schemas\Schema;
 use Filament\Tables\Table;
@@ -20,12 +23,23 @@ class ResponsiblesRelationManager extends RelationManager
     public function table(Table $table): Table
     {
         return $table
+            ->actions([
+                DetachAction::make()
+            ])
             ->headerActions([
+                AttachAction::make()
+                    ->recordTitle(fn($record) => $record->name . ' | ' . $record->document_type->value . ': ' . $record->document_number)
+                    ->preloadRecordSelect(),
                 Action::make('create_responsible')
                     ->label('Criar Responsável')
                     ->form(fn(Schema $schema) => ResponsibleForm::configure($schema))
                     ->action(function ($data) {
-                        dd($data);
+                        //create a responsible and attach him
+                        $this->getRelationship()->create($data);
+                        Notification::make()
+                            ->title('Responsável criado com sucesso')
+                            ->success()
+                            ->send();
                     }),
             ]);
     }

@@ -42,4 +42,10 @@ class PatientService
     {
         $this->record->delete();
     }
+
+    public function attachResponsible(string $responsibleId): self
+    {
+        $this->record->responsibles()->attach($responsibleId);
+        return $this;
+    }
 }

@@ -50,6 +50,7 @@ class PatientForm
                             ->displayFormat('d/m/Y')
                             ->required(),
                         TextInput::make('phone')
+                            ->columnSpanFull()
                             ->translateLabel()
                             ->tel()
                             ->placeholder('Ex.: (11) 99999-9999')
