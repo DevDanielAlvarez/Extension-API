@@ -6,9 +6,9 @@ use App\Models\Prescription;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\PrescriptionSchedules>
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\PrescriptionSchedule>
  */
-class PrescriptionSchedulesFactory extends Factory
+class PrescriptionScheduleFactory extends Factory
 {
     /**
      * Define the model's default state.

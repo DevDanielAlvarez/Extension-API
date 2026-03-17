@@ -4,7 +4,7 @@ namespace App\Services\PrescriptionSchedule;
 
 use App\DTO\PrescriptionSchedule\CreatePrescriptionScheduleDTO;
 use App\DTO\PrescriptionSchedule\UpdatePrescriptionScheduleDTO;
-use App\Models\PrescriptionSchedules;
+use App\Models\PrescriptionSchedule;
 use Illuminate\Database\Eloquent\Model;
 
 class PrescriptionScheduleService
@@ -21,12 +21,12 @@ class PrescriptionScheduleService
 
     public static function create(CreatePrescriptionScheduleDTO $dtoToCreate): static
     {
-        return new self(PrescriptionSchedules::create($dtoToCreate->toArray()));
+        return new self(PrescriptionSchedule::create($dtoToCreate->toArray()));
     }
 
     public static function find(string $id): static
     {
-        $schedule = PrescriptionSchedules::findOrFail($id);
+        $schedule = PrescriptionSchedule::findOrFail($id);
 
         return new self($schedule);
     }

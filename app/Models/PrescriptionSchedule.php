@@ -7,9 +7,9 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class PrescriptionSchedules extends Model
+class PrescriptionSchedule extends Model
 {
-    /** @use HasFactory<\Database\Factories\PrescriptionSchedulesFactory> */
+    /** @use HasFactory<\Database\Factories\PrescriptionScheduleFactory> */
     use HasFactory, HasUlids;
 
     protected $fillable = [

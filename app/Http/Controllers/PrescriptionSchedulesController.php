@@ -7,7 +7,7 @@ use App\DTO\PrescriptionSchedule\UpdatePrescriptionScheduleDTO;
 use App\Http\Requests\PrescriptionSchedule\CreatePrescriptionScheduleFormRequest;
 use App\Http\Requests\PrescriptionSchedule\UpdatePrescriptionScheduleFormRequest;
 use App\Http\Resources\PrescriptionScheduleResource;
-use App\Models\PrescriptionSchedules;
+use App\Models\PrescriptionSchedule;
 use App\Services\PrescriptionSchedule\PrescriptionScheduleService;
 use Illuminate\Support\Facades\DB;
 
@@ -18,7 +18,7 @@ class PrescriptionSchedulesController extends Controller
      */
     public function index()
     {
-        return PrescriptionScheduleResource::collection(PrescriptionSchedules::paginate(10));
+        return PrescriptionScheduleResource::collection(PrescriptionSchedule::paginate(10));
     }
 
     /**

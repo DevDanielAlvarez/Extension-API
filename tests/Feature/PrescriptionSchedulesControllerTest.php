@@ -1,7 +1,7 @@
 <?php
 
 use App\Models\Prescription;
-use App\Models\PrescriptionSchedules;
+use App\Models\PrescriptionSchedule;
 
 describe('PrescriptionSchedulesController', function () {
     describe('Store (POST /api/prescription-schedules)', function () {
@@ -106,7 +106,7 @@ describe('PrescriptionSchedulesController', function () {
 
     describe('Read/Update/Delete', function () {
         it('lists prescription schedules', function () {
-            PrescriptionSchedules::factory()->count(2)->create();
+            PrescriptionSchedule::factory()->count(2)->create();
 
             $response = $this->getJson('/api/prescription-schedules');
 
@@ -119,7 +119,7 @@ describe('PrescriptionSchedulesController', function () {
         });
 
         it('shows one prescription schedule', function () {
-            $schedule = PrescriptionSchedules::factory()->create();
+            $schedule = PrescriptionSchedule::factory()->create();
 
             $response = $this->getJson("/api/prescription-schedules/{$schedule->id}");
 
@@ -136,7 +136,7 @@ describe('PrescriptionSchedulesController', function () {
         });
 
         it('updates schedule with valid data', function () {
-            $schedule = PrescriptionSchedules::factory()->create([
+            $schedule = PrescriptionSchedule::factory()->create([
                 'day_of_week' => 1,
                 'time' => '08:00',
                 'quantity' => 1,
@@ -165,7 +165,7 @@ describe('PrescriptionSchedulesController', function () {
         });
 
         it('fails update with invalid time', function () {
-            $schedule = PrescriptionSchedules::factory()->create();
+            $schedule = PrescriptionSchedule::factory()->create();
 
             $response = $this->patchJson("/api/prescription-schedules/{$schedule->id}", [
                 'prescription_id' => $schedule->prescription_id,
@@ -179,7 +179,7 @@ describe('PrescriptionSchedulesController', function () {
         });
 
         it('deletes schedule', function () {
-            $schedule = PrescriptionSchedules::factory()->create();
+            $schedule = PrescriptionSchedule::factory()->create();
 
             $response = $this->deleteJson("/api/prescription-schedules/{$schedule->id}");
 
