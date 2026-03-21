@@ -208,5 +208,10 @@
   "Strength" : "Concentração",
   "Route of administration": "Via de administração",
   "Additional information": "Informações adicionais",
-  "Is compounded": "É manipulado"
+  "Is compounded": "É manipulado",
+  "Patient": "Paciente",
+  "Medicine": "Medicamento",
+  "Start date": "Data de início",
+  "End date": "Data de término",
+  "Instructions": "Instruções"
 }
