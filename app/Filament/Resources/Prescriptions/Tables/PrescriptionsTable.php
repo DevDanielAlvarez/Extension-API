@@ -15,24 +15,27 @@ class PrescriptionsTable
     {
         return $table
             ->columns([
-                TextColumn::make('id')
-                    ->label('ID')
-                    ->searchable(),
                 TextColumn::make('patient.name')
+                    ->translateLabel()
                     ->searchable(),
                 TextColumn::make('medicine.name')
+                    ->translateLabel()
                     ->searchable(),
                 TextColumn::make('start_date')
+                    ->translateLabel()
                     ->date()
                     ->sortable(),
                 TextColumn::make('end_date')
+                    ->translateLabel()
                     ->date()
                     ->sortable(),
                 TextColumn::make('created_at')
+                    ->translateLabel()
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('updated_at')
+                    ->translateLabel()
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
