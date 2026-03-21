@@ -16,11 +16,13 @@ class PrescriptionForm
                 Select::make('patient_id')
                     ->relationship('patient', 'name')
                     ->translateLabel()
+                    ->native(false)
                     ->required(),
                 Select::make('medicine_id')
                     ->relationship('medicine', 'name')
                     ->translateLabel()
-                    ->required(),
+                    ->required()
+                    ->native(false),
                 DatePicker::make('start_date')
                     ->translateLabel()
                     ->required(),
