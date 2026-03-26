@@ -16,6 +16,7 @@ return new class extends Migration {
             $table->string('document_type');
             $table->string('document_number');
             $table->string('password');
+            $table->boolean('is_adm')->default(false);
             $table->rememberToken();
             $table->timestamps();
 
