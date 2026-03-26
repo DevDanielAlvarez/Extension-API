@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Enums\PermissionScreenEnum;
+use App\Models\Permission;
 use Illuminate\Database\Seeder;
 
 class PermissionSeeder extends Seeder
@@ -12,22 +13,27 @@ class PermissionSeeder extends Seeder
      */
     public function run(): void
     {
-        $permissions = [
-            ['name' => 'listar', 'screen' => PermissionScreenEnum::PATIENTS_SCREEN->value],
-            ['name' => 'exibir', 'screen' => PermissionScreenEnum::PATIENTS_SCREEN->value],
-            ['name' => 'criar', 'screen' => PermissionScreenEnum::PATIENTS_SCREEN->value],
-            ['name' => 'atualizar', 'screen' => PermissionScreenEnum::PATIENTS_SCREEN->value],
-            ['name' => 'deletar', 'screen' => PermissionScreenEnum::PATIENTS_SCREEN->value],
-            ['name' => 'deletar em massa', 'screen' => PermissionScreenEnum::PATIENTS_SCREEN->value],
-            ['name' => 'restaurar', 'screen' => PermissionScreenEnum::PATIENTS_SCREEN->value],
-            ['name' => 'restaurar em massa', 'screen' => PermissionScreenEnum::PATIENTS_SCREEN->value],
-            ['name' => 'forçar deletar', 'screen' => PermissionScreenEnum::PATIENTS_SCREEN->value],
-            ['name' => 'forçar deletar em massa', 'screen' => PermissionScreenEnum::PATIENTS_SCREEN->value],
-            ['name' => 'reordenar', 'screen' => PermissionScreenEnum::PATIENTS_SCREEN->value],
+        $actions = [
+            'listar',
+            'exibir',
+            'criar',
+            'atualizar',
+            'deletar',
+            'deletar em massa',
+            'restaurar',
+            'restaurar em massa',
+            'forçar deletar',
+            'forçar deletar em massa',
+            'reordenar',
         ];
 
-        foreach ($permissions as $permission) {
-            \App\Models\Permission::create($permission);
+        foreach (PermissionScreenEnum::cases() as $screen) {
+            foreach ($actions as $action) {
+                Permission::firstOrCreate([
+                    'name' => $action,
+                    'screen' => $screen->value,
+                ]);
+            }
         }
     }
 }

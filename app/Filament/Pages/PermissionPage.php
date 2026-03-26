@@ -130,7 +130,6 @@ class PermissionPage extends Page implements HasForms
         if (blank($this->data['role'])) {
             return new Schema($this);
         }
-
         $permissions = Arr::get($this->permissions, $this->data['screen']);
         return (new Schema($this))->schema([
             Grid::make(3)->schema(
