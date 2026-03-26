@@ -213,5 +213,10 @@
   "Medicine": "Medicamento",
   "Start date": "Data de início",
   "End date": "Data de término",
-  "Instructions": "Instruções"
+  "Instructions": "Instruções",
+  "Medicines Screens": "Tela de Medicamentos",
+  "Patients Screens": "Tela de Pacientes",
+  "Roles Screens": "Tela de Funções",
+  "Responsibles Screens": "Tela de Responsáveis",
+  "Prescriptions Screens": "Tela de Prescrições"
 }
