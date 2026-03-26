@@ -23,6 +23,16 @@ class PatientResource extends Resource
 
     protected static ?string $recordTitleAttribute = 'name';
 
+    public static function getModelLabel(): string
+    {
+        return __('Paciente');
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return __('Pacientes');
+    }
+
     public static function form(Schema $schema): Schema
     {
         return PatientForm::configure($schema);

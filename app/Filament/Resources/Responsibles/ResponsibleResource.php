@@ -22,6 +22,16 @@ class ResponsibleResource extends Resource
 
     protected static ?string $recordTitleAttribute = 'name';
 
+    public static function getModelLabel(): string
+    {
+        return __('Responsável');
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return __('Responsáveis');
+    }
+
     public static function form(Schema $schema): Schema
     {
         return ResponsibleForm::configure($schema);

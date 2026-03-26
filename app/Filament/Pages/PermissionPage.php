@@ -5,6 +5,7 @@ namespace App\Filament\Pages;
 use App\Enums\PermissionScreenEnum;
 use App\Models\Permission;
 use App\Models\Role;
+use BackedEnum;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\ToggleButtons;
@@ -15,12 +16,15 @@ use Filament\Pages\Page;
 use Filament\Schemas\Components\Fieldset;
 use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Schema;
+use Filament\Support\Icons\Heroicon;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Arr;
 
 class PermissionPage extends Page implements HasForms
 {
     protected string $view = 'filament.pages.permission-page';
+
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedKey;
 
     public ?array $data = [];
 

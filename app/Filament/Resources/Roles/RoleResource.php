@@ -25,6 +25,16 @@ class RoleResource extends Resource
 
     protected static ?string $recordTitleAttribute = 'name';
 
+    public static function getModelLabel(): string
+    {
+        return __('Função');
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return __('Funções');
+    }
+
     public static function form(Schema $schema): Schema
     {
         return RoleForm::configure($schema);

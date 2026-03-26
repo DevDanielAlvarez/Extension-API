@@ -22,6 +22,16 @@ class MedicineResource extends Resource
 
     protected static ?string $recordTitleAttribute = 'name';
 
+    public static function getModelLabel(): string
+    {
+        return __('Medicamento');
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return __('Medicamentos');
+    }
+
     public static function form(Schema $schema): Schema
     {
         return MedicineForm::configure($schema);
