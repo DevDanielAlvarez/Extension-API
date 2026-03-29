@@ -150,7 +150,18 @@ class PermissionPage extends Page implements HasForms
     public function save()
     {
         $this->validate();
-
+        $role = Role::find($this->data['role']);
+        $permissionsToSync = [];
+        foreach ($this->getPermissionsOfData() as $permissionKey) {
+            if ($this->data[$permissionKey]) {
+                $permissionsToSync[] = Permission::where('name', $permissionKey)->first()->id;
+            }
+        }
+        $role->permissions()->sync($permissionsToSync);
+        Notification::make()
+            ->title('Permissões atualizadas com sucesso')
+            ->success()
+            ->send();
         
     }
 
