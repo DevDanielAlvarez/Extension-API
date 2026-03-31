@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\Medicines\Tables;
 
 use Filament\Actions\BulkActionGroup;
+use Filament\Actions\ActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Tables\Columns\IconColumn;
@@ -34,6 +35,20 @@ class MedicinesTable
                     ->boolean(),
                 TextColumn::make('route_of_administration')
                     ->translateLabel()
+                    ->formatStateUsing(function ($state): string {
+                        $value = $state instanceof \BackedEnum ? $state->value : (string) $state;
+
+                        return match ($value) {
+                            'ORAL' => __('Oral'),
+                            'SUBLINGUAL' => __('Sublingual'),
+                            'TOPICAL' => __('Topical'),
+                            'INHALATION' => __('Inhalation'),
+                            'INTRAVENOUS' => __('Intravenous'),
+                            'INTRAMUSCULAR' => __('Intramuscular'),
+                            'SUBCUTANEOUS' => __('Subcutaneous'),
+                            default => $value,
+                        };
+                    })
                     ->badge()
                     ->searchable(),
                 TextColumn::make('created_at')
@@ -51,7 +66,9 @@ class MedicinesTable
                 //
             ])
             ->recordActions([
-                EditAction::make(),
+                ActionGroup::make([
+                    EditAction::make(),
+                ]),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([

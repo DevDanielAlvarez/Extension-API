@@ -12,11 +12,11 @@ class PrescriptionInfolist
         return $schema
             ->components([
                 TextEntry::make('id')
-                    ->label('ID'),
+                            ->label(__('ID')),
                 TextEntry::make('patient.name')
-                    ->label('Patient'),
+                            ->label(__('Patient')),
                 TextEntry::make('medicine.name')
-                    ->label('Medicine'),
+                            ->label(__('Medicine')),
                 TextEntry::make('start_date')
                     ->date(),
                 TextEntry::make('end_date')

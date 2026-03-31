@@ -48,7 +48,7 @@ class UserForm
                             ->dehydrated(fn (?string $state): bool => filled($state))
                             ->columnSpanFull(),
                         Select::make('roles')
-                            ->label('Funções')
+                                ->label(__('Roles'))
                             ->relationship('roles', 'name')
                             ->multiple()
                             ->searchable()
@@ -56,7 +56,7 @@ class UserForm
                             ->native(false)
                             ->columnSpanFull(),
                         Toggle::make('is_adm')
-                            ->label('Administrador')
+                                ->label(__('Administrator'))
                             ->inline(false)
                             ->default(false)
                             ->columnSpanFull(),

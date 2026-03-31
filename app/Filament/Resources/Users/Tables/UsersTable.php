@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\Users\Tables;
 
 use Filament\Actions\BulkActionGroup;
+use Filament\Actions\ActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Tables\Columns\IconColumn;
@@ -26,11 +27,11 @@ class UsersTable
                     ->translateLabel()
                     ->searchable(),
                 TextColumn::make('roles.name')
-                    ->label('Funções')
+                    ->label(__('Funções'))
                     ->badge()
                     ->separator(', '),
                 IconColumn::make('is_adm')
-                    ->label('Administrador')
+                    ->label(__('Administrador'))
                     ->boolean(),
                 TextColumn::make('created_at')
                     ->translateLabel()
@@ -47,7 +48,9 @@ class UsersTable
                 //
             ])
             ->recordActions([
-                EditAction::make(),
+                ActionGroup::make([
+                    EditAction::make(),
+                ]),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([

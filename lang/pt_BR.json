@@ -246,5 +246,15 @@
   "Scheduled doses": "Doses agendadas",
   "Applications by hour today": "Aplicações por horário de hoje",
   "Weekly medication load": "Carga semanal de medicações",
-  "Medications to apply today": "Medicamentos para aplicar hoje"
+  "Medications to apply today": "Medicamentos para aplicar hoje",
+  "ID": "ID",
+  "Invalid credentials": "Credenciais inválidas",
+  "The document or password is incorrect.": "O documento ou a senha estão incorretos.",
+  "Oral": "Oral",
+  "Sublingual": "Sublingual",
+  "Topical": "Topica",
+  "Inhalation": "Inalatoria",
+  "Intravenous": "Intravenosa",
+  "Intramuscular": "Intramuscular",
+  "Subcutaneous": "Subcutanea"
 }

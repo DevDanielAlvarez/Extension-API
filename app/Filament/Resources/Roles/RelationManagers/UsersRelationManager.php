@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\Roles\RelationManagers;
 
 use App\Enums\DocumentTypeEnum;
+use Filament\Actions\ActionGroup;
 use Filament\Actions\AttachAction;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\CreateAction;
@@ -50,7 +51,7 @@ class UsersRelationManager extends RelationManager
         return $schema
             ->components([
                 TextEntry::make('id')
-                    ->label('ID'),
+                    ->label(__('ID')),
                 TextEntry::make('name')
                     ->translateLabel(),
                 TextEntry::make('document_type')
@@ -99,12 +100,16 @@ class UsersRelationManager extends RelationManager
                 //
             ])
             ->headerActions([
-                AttachAction::make()
-                    ->preloadRecordSelect(),
+                ActionGroup::make([
+                    AttachAction::make()
+                        ->preloadRecordSelect(),
+                ]),
             ])
             ->recordActions([
-                ViewAction::make(),
-                DetachAction::make(),
+                ActionGroup::make([
+                    ViewAction::make(),
+                    DetachAction::make(),
+                ]),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([

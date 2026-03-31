@@ -42,8 +42,8 @@ class CustomLogin extends Login
 
         if (!$user) {
             Notification::make()
-                ->title('Credenciais inválidas')
-                ->body('O documento ou a senha estão incorretos.')
+                ->title(__('Invalid credentials'))
+                ->body(__('The document or password is incorrect.'))
                 ->danger()
                 ->send();
             return null;
@@ -51,8 +51,8 @@ class CustomLogin extends Login
 
         if (!Hash::check($data['password'], $user->password)) {
             Notification::make()
-                ->title('Credenciais inválidas')
-                ->body('O documento ou a senha estão incorretos.')
+                ->title(__('Invalid credentials'))
+                ->body(__('The document or password is incorrect.'))
                 ->danger()
                 ->send();
             return null;

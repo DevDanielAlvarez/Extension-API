@@ -7,6 +7,7 @@ use App\Models\Permission;
 use App\Models\Role;
 use BackedEnum;
 use Filament\Actions\Action;
+use Filament\Actions\ActionGroup;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\ToggleButtons;
 use Filament\Forms\Concerns\InteractsWithForms;
@@ -43,29 +44,31 @@ class PermissionPage extends Page implements HasForms
     public function getHeaderActions(): array
     {
         return [
-            Action::make('activateAll')
-                ->label('Ativar todas as permissões')
-                ->color('success')
-                ->size('xl')
-                ->visible(fn() => filled($this->data['role']) && filled($this->data['screen']))
-                ->icon('heroicon-o-bolt')
-                ->requiresConfirmation()
-                ->action(fn() => $this->activeAll()),
-            Action::make('disableAll')
-                ->label('Desativar todas as permissões')
-                ->color('danger')
-                ->visible(fn() => filled($this->data['role']) && filled($this->data['screen']))
-                ->size('xl')
-                ->icon('heroicon-o-x-mark')
-                ->requiresConfirmation()
-                ->action(fn() => $this->disableAll()),
-            Action::make('save')
-                ->label('Salvar alterações')
-                ->color('primary')
-                ->visible(fn() => filled($this->data['role']) && filled($this->data['screen']))
-                ->size('xl')
-                ->icon('heroicon-o-check')
-                ->action(fn() => $this->save()),
+            ActionGroup::make([
+                Action::make('activateAll')
+                    ->label(__('Ativar todas as permissões'))
+                    ->color('success')
+                    ->size('xl')
+                    ->visible(fn() => filled($this->data['role']) && filled($this->data['screen']))
+                    ->icon('heroicon-o-bolt')
+                    ->requiresConfirmation()
+                    ->action(fn() => $this->activeAll()),
+                Action::make('disableAll')
+                    ->label(__('Desativar todas as permissões'))
+                    ->color('danger')
+                    ->visible(fn() => filled($this->data['role']) && filled($this->data['screen']))
+                    ->size('xl')
+                    ->icon('heroicon-o-x-mark')
+                    ->requiresConfirmation()
+                    ->action(fn() => $this->disableAll()),
+                Action::make('save')
+                    ->label(__('Salvar alterações'))
+                    ->color('primary')
+                    ->visible(fn() => filled($this->data['role']) && filled($this->data['screen']))
+                    ->size('xl')
+                    ->icon('heroicon-o-check')
+                    ->action(fn() => $this->save()),
+            ]),
         ];
     }
 
@@ -106,7 +109,7 @@ class PermissionPage extends Page implements HasForms
                             ->native(false),
                         Select::make('screen')
                             ->required()
-                            ->label('Tela que receberá as permissões')
+                            ->label(__('Tela que receberá as permissões'))
                             ->afterStateUpdated(fn() => $this->updatePermissions())
                             ->live()
                             ->default(PermissionScreenEnum::ROLES_SCREEN->value)
@@ -177,7 +180,7 @@ class PermissionPage extends Page implements HasForms
         ]);
 
         Notification::make()
-            ->title('Permissões atualizadas com sucesso')
+            ->title(__('Permissões atualizadas com sucesso'))
             ->success()
             ->send();
 
@@ -206,7 +209,7 @@ class PermissionPage extends Page implements HasForms
         }
 
         Notification::make()
-            ->title('Todas as permissões foram ativadas')
+            ->title(__('Todas as permissões foram ativadas'))
             ->success()
             ->send();
     }
@@ -219,7 +222,7 @@ class PermissionPage extends Page implements HasForms
         }
 
         Notification::make()
-            ->title('Todas as permissões foram desativadas')
+            ->title(__('Todas as permissões foram desativadas'))
             ->success()
             ->send();
     }

@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\Responsibles\Pages;
 
 use App\Filament\Resources\Responsibles\ResponsibleResource;
+use Filament\Actions\ActionGroup;
 use Filament\Actions\DeleteAction;
 use Filament\Resources\Pages\EditRecord;
 
@@ -13,7 +14,9 @@ class EditResponsible extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
-            DeleteAction::make(),
+            ActionGroup::make([
+                DeleteAction::make(),
+            ]),
         ];
     }
 }

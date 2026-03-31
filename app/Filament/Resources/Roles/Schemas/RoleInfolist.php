@@ -12,7 +12,7 @@ class RoleInfolist
         return $schema
             ->components([
                 TextEntry::make('id')
-                    ->label('ID'),
+                    ->label(__('ID')),
                 TextEntry::make('name'),
                 TextEntry::make('created_at')
                     ->dateTime()

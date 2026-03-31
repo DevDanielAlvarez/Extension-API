@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\Prescriptions\RelationManagers;
 
 use App\Filament\Resources\Prescriptions\PrescriptionResource;
+use Filament\Actions\ActionGroup;
 use Filament\Actions\CreateAction;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables\Columns\TextColumn;
@@ -35,7 +36,9 @@ class PrescriptionSchedulesRelationManager extends RelationManager
                     ->translateLabel(),
             ])
             ->headerActions([
-                CreateAction::make(),
+                ActionGroup::make([
+                    CreateAction::make(),
+                ]),
             ]);
     }
 }
