@@ -214,6 +214,10 @@
   "Start date": "Data de início",
   "End date": "Data de término",
   "Instructions": "Instruções",
+  "Prescription schedules": "Horários da prescrição",
+  "Day of week": "Dia da semana",
+  "Time": "Horário",
+  "Quantity": "Quantidade",
   "Medicines Screens": "Tela de Medicamentos",
   "Patients Screens": "Tela de Pacientes",
   "Roles Screens": "Tela de Funções",
@@ -222,5 +226,12 @@
   "User": "Usuário",
   "Users": "Usuários",
   "Is adm": "Administrador",
-  "Roles": "Funções"
+  "Roles": "Funções",
+  "Monday": "Segunda-feira",
+  "Tuesday": "Terça-feira",
+  "Wednesday": "Quarta-feira",
+  "Thursday": "Quinta-feira",
+  "Friday": "Sexta-feira",
+  "Saturday": "Sábado",
+  "Sunday": "Domingo"
 }
