@@ -7,6 +7,7 @@ use App\DTO\Prescription\UpdatePrescriptionDTO;
 use App\Http\Requests\Prescription\CreatePrescriptionFormRequest;
 use App\Http\Requests\Prescription\UpdatePrescriptionFormRequest;
 use App\Http\Resources\PrescriptionResource;
+use App\Http\Resources\PrescriptionScheduleResource;
 use App\Models\Prescription;
 use App\Services\Prescription\PrescriptionService;
 use Carbon\Carbon;
@@ -87,6 +88,18 @@ class PrescriptionController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        $prescriptionService = PrescriptionService::find($id);
+        $prescriptionService->delete();
+
+        return response()->noContent();
+    }
+
+    public function schedules(string $prescription)
+    {
+        $prescriptionService = PrescriptionService::find($prescription);
+
+        return PrescriptionScheduleResource::collection(
+            $prescriptionService->getRecord()->prescriptionSchedules()->paginate(10)
+        );
     }
 }

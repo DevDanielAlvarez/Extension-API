@@ -77,6 +77,9 @@ class MedicineController extends Controller
 
     public function destroy(string $id)
     {
-        //
+        $medicineService = MedicineService::find($id);
+        $medicineService->getRecord()->delete();
+
+        return response()->noContent();
     }
 }

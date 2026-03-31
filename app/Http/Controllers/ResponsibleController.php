@@ -7,6 +7,7 @@ use App\DTO\Responsible\UpdateResponsibleDTO;
 use App\Enums\DocumentTypeEnum;
 use App\Http\Requests\Responsible\CreateResponsibleFormRequest;
 use App\Http\Requests\Responsible\UpdateResponsibleFormRequest;
+use App\Http\Resources\PatientResource;
 use App\Http\Resources\ResponsibleResource;
 use App\Models\Responsible;
 use App\Services\Patient\PatientService;
@@ -95,5 +96,14 @@ class ResponsibleController extends Controller
         $responsibleService->getRecord()->patients()->detach($patient);
 
         return response()->noContent();
+    }
+
+    public function patients(string $responsible)
+    {
+        $responsibleService = ResponsibleService::find($responsible);
+
+        return PatientResource::collection(
+            $responsibleService->getRecord()->patients()->paginate(10)
+        );
     }
 }

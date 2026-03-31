@@ -7,10 +7,11 @@ use App\DTO\User\UpdateUserDTO;
 use App\Enums\DocumentTypeEnum;
 use App\Http\Requests\User\CreateUserFormRequest;
 use App\Http\Requests\User\UpdateUserFormRequest;
+use App\Http\Resources\RoleResource;
 use App\Http\Resources\UserResource;
 use App\Models\User;
+use App\Services\Role\RoleService;
 use App\Services\User\UserService;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 class UserController extends Controller
@@ -83,6 +84,38 @@ class UserController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        $userService = UserService::find($id);
+        $userService->getRecord()->delete();
+
+        return response()->noContent();
+    }
+
+    public function roles(string $id)
+    {
+        $userService = UserService::find($id);
+
+        return RoleResource::collection(
+            $userService->getRecord()->roles()->paginate(10)
+        );
+    }
+
+    public function attachRole(string $id, string $role)
+    {
+        $userService = UserService::find($id);
+        RoleService::find($role);
+
+        $userService->getRecord()->roles()->syncWithoutDetaching([$role]);
+
+        return response()->noContent();
+    }
+
+    public function detachRole(string $id, string $role)
+    {
+        $userService = UserService::find($id);
+        RoleService::find($role);
+
+        $userService->getRecord()->roles()->detach($role);
+
+        return response()->noContent();
     }
 }
