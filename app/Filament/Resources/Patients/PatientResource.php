@@ -10,7 +10,6 @@ use App\Filament\Resources\Patients\RelationManagers\ResponsiblesRelationManager
 use App\Filament\Resources\Patients\Schemas\PatientForm;
 use App\Filament\Resources\Patients\Tables\PatientsTable;
 use App\Models\Patient;
-use App\Models\Prescription;
 use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;

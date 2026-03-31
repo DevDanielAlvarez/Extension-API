@@ -6,6 +6,7 @@ use App\Filament\Resources\Prescriptions\Pages\CreatePrescription;
 use App\Filament\Resources\Prescriptions\Pages\EditPrescription;
 use App\Filament\Resources\Prescriptions\Pages\ListPrescriptions;
 use App\Filament\Resources\Prescriptions\Pages\ViewPrescription;
+use App\Filament\Resources\Prescriptions\RelationManagers\PrescriptionSchedulesRelationManager;
 use App\Filament\Resources\Prescriptions\Schemas\PrescriptionForm;
 use App\Filament\Resources\Prescriptions\Schemas\PrescriptionInfolist;
 use App\Filament\Resources\Prescriptions\Tables\PrescriptionsTable;
@@ -50,7 +51,7 @@ class PrescriptionResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            PrescriptionSchedulesRelationManager::class,
         ];
     }
 
