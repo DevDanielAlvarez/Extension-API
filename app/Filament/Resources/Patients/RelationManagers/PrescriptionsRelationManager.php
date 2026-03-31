@@ -120,7 +120,20 @@ class PrescriptionsRelationManager extends RelationManager
                     }),
             ])
             ->recordActions([
-                EditAction::make(),
+                EditAction::make()
+                    ->mutateRecordDataUsing(function(array $data){
+                        //get prescription using id in data
+                        $prescription = PrescriptionService::find($data['id']);
+                        $data['prescription_schedules'] = $prescription->getRecord()->prescriptionSchedules->map(function($schedule){
+                            return [
+                                'day_of_week' => $schedule->day_of_week,
+                                'time' => $schedule->time,
+                                'quantity' => $schedule->quantity,
+                            ];
+                        })->toArray();
+
+                        return $data;
+                    }),
                 DeleteAction::make(),
             ])
             ->toolbarActions([
