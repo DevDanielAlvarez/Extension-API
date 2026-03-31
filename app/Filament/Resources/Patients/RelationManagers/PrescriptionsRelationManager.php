@@ -86,9 +86,21 @@ class PrescriptionsRelationManager extends RelationManager
         return $table
             ->recordTitleAttribute('start_date')
             ->columns([
+                TextColumn::make('medicine.name')
+                    ->translateLabel()
+                    ->searchable(),
                 TextColumn::make('start_date')
-                    ->label(__('Start date'))
+                    ->translateLabel()
                     ->date()
+                    ->sortable()
+                    ->searchable(),
+                TextColumn::make('end_date')
+                    ->translateLabel()
+                    ->date()
+                    ->sortable(),
+                TextColumn::make('instructions')
+                    ->translateLabel()
+                    ->limit(40)
                     ->searchable(),
             ])
             ->filters([
