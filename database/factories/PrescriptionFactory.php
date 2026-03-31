@@ -18,12 +18,20 @@ class PrescriptionFactory extends Factory
      */
     public function definition(): array
     {
+        $startDate = fake()->dateTimeBetween('-30 days', 'now');
+        $hasEndDate = fake()->boolean(70);
+
         return [
             'patient_id' => Patient::inRandomOrder()->first()->id ?? Patient::factory()->create()->id,
             'medicine_id' => Medicine::inRandomOrder()->first()->id ?? Medicine::factory()->create()->id,
-            'start_date' => now(),
-            'end_date' => now()->addDays(7),
-            'instructions' => $this->faker->text(200),
+            'start_date' => $startDate,
+            'end_date' => $hasEndDate ? fake()->dateTimeBetween($startDate, '+45 days') : null,
+            'instructions' => fake()->randomElement([
+                'Administrar apos cafe da manha e jantar.',
+                'Aplicar conforme horario e observar resposta clinica.',
+                'Nao interromper sem orientacao medica.',
+                'Administrar com monitoramento de sinais vitais.',
+            ]),
         ];
     }
 }

@@ -24,14 +24,17 @@ class UserFactory extends Factory
      */
     public function definition(): array
     {
+        $firstNames = ['Gabriel', 'Beatriz', 'Thiago', 'Camila', 'Mateus', 'Aline', 'Felipe', 'Larissa', 'Vitor', 'Isabela'];
+        $lastNames = ['Silva', 'Santos', 'Oliveira', 'Souza', 'Costa', 'Pereira', 'Lima', 'Alves'];
+
         $documentType = fake()->randomElement([DocumentTypeEnum::CPF->value, DocumentTypeEnum::CNPJ->value]);
-        
+
         return [
-            'name' => fake()->name(),
+            'name' => fake()->randomElement($firstNames) . ' ' . fake()->randomElement($lastNames),
             'document_type' => $documentType,
-            'document_number' => $documentType === DocumentTypeEnum::CPF->value 
-                ? fake()->numerify('###########') // 11 digits for CPF
-                : fake()->numerify('##############'), // 14 digits for CNPJ
+            'document_number' => $documentType === DocumentTypeEnum::CPF->value
+                ? fake()->unique()->numerify('###########')
+                : fake()->unique()->numerify('##############'),
             'password' => static::$password ??= Hash::make('password'),
             'remember_token' => Str::random(10),
         ];

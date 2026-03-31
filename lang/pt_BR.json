@@ -233,5 +233,18 @@
   "Thursday": "Quinta-feira",
   "Friday": "Sexta-feira",
   "Saturday": "Sábado",
-  "Sunday": "Domingo"
+  "Sunday": "Domingo",
+  "Care Dashboard": "Dashboard Assistencial",
+  "Total patients": "Total de pacientes",
+  "Registered in the system": "Cadastrados no sistema",
+  "Active prescriptions": "Prescrições ativas",
+  "Valid for today": "Válidas para hoje",
+  "Doses scheduled today": "Doses agendadas hoje",
+  "Applications expected in 24h": "Aplicações previstas em 24h",
+  "Patients with doses today": "Pacientes com doses hoje",
+  "Patients with at least one schedule today": "Pacientes com pelo menos um horário hoje",
+  "Scheduled doses": "Doses agendadas",
+  "Applications by hour today": "Aplicações por horário de hoje",
+  "Weekly medication load": "Carga semanal de medicações",
+  "Medications to apply today": "Medicamentos para aplicar hoje"
 }

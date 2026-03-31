@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Enums\DocumentTypeEnum;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -16,13 +17,25 @@ class PatientFactory extends Factory
      */
     public function definition(): array
     {
+        $firstNames = ['Joao', 'Maria', 'Ana', 'Pedro', 'Lucas', 'Julia', 'Paulo', 'Carla', 'Rafael', 'Fernanda'];
+        $lastNames = ['Silva', 'Santos', 'Oliveira', 'Souza', 'Pereira', 'Costa', 'Rodrigues', 'Almeida'];
+
+        $admissionDate = fake()->dateTimeBetween('-2 years', 'now');
+
         return [
-            'name' => fake()->name(),
-            'document_type' => fake()->randomElement(['CPF', 'CNPJ']),
-            'document_number' => fake()->numerify('###########'), // 11 digits for CPF
-            'admission_date' => fake()->date(),
-            'birthday' => fake()->date(),
-            'phone' => fake()->phoneNumber(),
+            'name' => fake()->randomElement($firstNames) . ' ' . fake()->randomElement($lastNames),
+            'document_type' => DocumentTypeEnum::CPF->value,
+            'document_number' => fake()->unique()->numerify('###########'),
+            'admission_date' => $admissionDate,
+            'birthday' => fake()->dateTimeBetween('-95 years', '-1 years'),
+            'phone' => fake()->optional()->numerify('(##) 9####-####'),
+            'nursing_report' => [
+                'observacao' => fake()->randomElement([
+                    'Paciente colaborativo durante os cuidados.',
+                    'Refere dor leve no periodo da tarde.',
+                    'Sinais vitais estaveis na ultima avaliacao.',
+                ]),
+            ],
         ];
     }
 }

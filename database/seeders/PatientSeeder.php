@@ -2,7 +2,8 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use App\Models\Patient;
+use App\Models\Responsible;
 use Illuminate\Database\Seeder;
 
 class PatientSeeder extends Seeder
@@ -12,6 +13,13 @@ class PatientSeeder extends Seeder
      */
     public function run(): void
     {
-        //
+        $patients = Patient::factory()->count(40)->create();
+        $responsibleIds = Responsible::query()->pluck('id');
+
+        $patients->each(function (Patient $patient) use ($responsibleIds): void {
+            $patient->responsibles()->syncWithoutDetaching(
+                $responsibleIds->random(rand(1, min(2, $responsibleIds->count())))->values()->all()
+            );
+        });
     }
 }

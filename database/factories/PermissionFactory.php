@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Enums\PermissionScreenEnum;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -16,8 +17,23 @@ class PermissionFactory extends Factory
      */
     public function definition(): array
     {
+        $actions = [
+            'listar',
+            'exibir',
+            'criar',
+            'atualizar',
+            'deletar',
+            'deletar em massa',
+            'restaurar',
+            'restaurar em massa',
+            'forcar deletar',
+            'forcar deletar em massa',
+            'reordenar',
+        ];
+
         return [
-            //
+            'name' => fake()->randomElement($actions),
+            'screen' => fake()->randomElement(PermissionScreenEnum::cases())->value,
         ];
     }
 }

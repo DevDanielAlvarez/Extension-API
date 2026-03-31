@@ -2,8 +2,6 @@
 
 namespace Database\Seeders;
 
-use App\Enums\DocumentTypeEnum;
-use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
@@ -16,24 +14,16 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // User::factory(10)->create();
-
-        User::factory()->create([
-            'name' => 'daniel',
-            'document_type' => DocumentTypeEnum::CPF->value,
-            'document_number' => '123',
-            'password' => bcrypt('123'),
-            'is_adm' => true,
-        ]);
-        User::factory()->create([
-            'name' => 'user',
-            'document_type' => DocumentTypeEnum::CPF->value,
-            'document_number' => '1234',
-            'password' => bcrypt('1234'),
-            'is_adm' => false,
-        ]);
         $this->call([
             PermissionSeeder::class,
+            RoleSeeder::class,
+            PermissionRoleSeeder::class,
+            ResponsibleSeeder::class,
+            PatientSeeder::class,
+            MedicineSeeder::class,
+            PrescriptionSeeder::class,
+            PrescriptionSchedulesSeeder::class,
+            UserSeeder::class,
         ]);
     }
 }

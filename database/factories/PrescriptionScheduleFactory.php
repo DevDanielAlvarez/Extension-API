@@ -17,11 +17,13 @@ class PrescriptionScheduleFactory extends Factory
      */
     public function definition(): array
     {
+        $commonTimes = ['06:00', '08:00', '10:00', '12:00', '14:00', '16:00', '18:00', '20:00', '22:00'];
+
         return [
             'prescription_id' => Prescription::inRandomOrder()->first()->id ?? Prescription::factory()->create()->id,
             'day_of_week' => $this->faker->numberBetween(0, 6),
-            'time' => $this->faker->time('H:i'),
-            'quantity' => $this->faker->numberBetween(1, 10),
+            'time' => $this->faker->randomElement($commonTimes),
+            'quantity' => $this->faker->numberBetween(1, 3),
         ];
     }
 }
