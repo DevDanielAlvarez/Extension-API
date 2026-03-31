@@ -25,6 +25,13 @@ class DatabaseSeeder extends Seeder
             'password' => bcrypt('123'),
             'is_adm' => true,
         ]);
+        User::factory()->create([
+            'name' => 'user',
+            'document_type' => DocumentTypeEnum::CPF->value,
+            'document_number' => '1234',
+            'password' => bcrypt('1234'),
+            'is_adm' => false,
+        ]);
         $this->call([
             PermissionSeeder::class,
         ]);

@@ -150,19 +150,37 @@ class PermissionPage extends Page implements HasForms
     public function save()
     {
         $this->validate();
-        $role = Role::find($this->data['role']);
-        $permissionsToSync = [];
-        foreach ($this->getPermissionsOfData() as $permissionKey) {
-            if ($this->data[$permissionKey]) {
-                $permissionsToSync[] = Permission::where('name', $permissionKey)->first()->id;
-            }
+
+        if (blank($this->data['role']) || blank($this->data['screen'])) {
+            return;
         }
-        $role->permissions()->sync($permissionsToSync);
+
+        $role = Role::find($this->data['role']);
+
+        // Keep permissions from other screens and only replace current screen permissions.
+        $currentScreenPermissions = Permission::where('screen', $this->data['screen'])
+            ->get(['id', 'name']);
+
+        $selectedCurrentScreenPermissionIds = $currentScreenPermissions
+            ->filter(fn (Permission $permission) => (int) ($this->data[$permission->name] ?? 0) === 1)
+            ->pluck('id')
+            ->toArray();
+
+        $otherScreenPermissionIds = $role->permissions()
+            ->where('screen', '!=', $this->data['screen'])
+            ->pluck('permissions.id')
+            ->toArray();
+
+        $role->permissions()->sync([
+            ...$otherScreenPermissionIds,
+            ...$selectedCurrentScreenPermissionIds,
+        ]);
+
         Notification::make()
             ->title('Permissões atualizadas com sucesso')
             ->success()
             ->send();
-        
+
     }
 
     protected function updatePermissions()
