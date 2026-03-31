@@ -12,7 +12,7 @@ class CreatePrescriptionDTO extends AbstractDTO
         public readonly string $medicine_id,
         public readonly Carbon $start_date,
         public readonly Carbon $end_date,
-        public readonly string $instructions,
+        public readonly ?string $instructions,
     ) {
     }
 }
