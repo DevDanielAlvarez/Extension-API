@@ -24,12 +24,12 @@ class AuthController extends Controller
         // the user must exists and the password must correct
         if (!$user || !Hash::check($validatedData['password'], $user->password)) {
             return response()
-                ->json([
-                    'message' => 'Invalid credentials'
+            ->json([
+                'message' => 'Invalid credentials'
                 ], 401);
-        }
-        // if the user exists and the password is correct, create a new token to login user using sanctum
-        $token = $user->createToken('auth_token')->plainTextToken;
+                }
+                // if the user exists and the password is correct, create a new token to login user using sanctum
+                $token = $user->createToken('auth_token')->plainTextToken;
         // return the user and token found
         return response()
             ->json([
