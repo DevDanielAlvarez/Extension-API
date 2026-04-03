@@ -3,7 +3,6 @@
 namespace App\Filament\Resources\Medicines\Pages;
 
 use App\Filament\Resources\Medicines\MedicineResource;
-use Filament\Actions\ActionGroup;
 use Filament\Actions\CreateAction;
 use Filament\Resources\Pages\ListRecords;
 
@@ -14,9 +13,7 @@ class ListMedicines extends ListRecords
     protected function getHeaderActions(): array
     {
         return [
-            ActionGroup::make([
-                CreateAction::make(),
-            ]),
+            CreateAction::make(),
         ];
     }
 }

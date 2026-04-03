@@ -3,7 +3,6 @@
 namespace App\Filament\Resources\Prescriptions\Pages;
 
 use App\Filament\Resources\Prescriptions\PrescriptionResource;
-use Filament\Actions\ActionGroup;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\ViewAction;
 use Filament\Resources\Pages\EditRecord;
@@ -15,10 +14,8 @@ class EditPrescription extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
-            ActionGroup::make([
-                ViewAction::make(),
-                DeleteAction::make(),
-            ]),
+            ViewAction::make(),
+            DeleteAction::make(),
         ];
     }
 }

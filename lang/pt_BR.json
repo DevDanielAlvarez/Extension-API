@@ -256,5 +256,7 @@
   "Inhalation": "Inalatoria",
   "Intravenous": "Intravenosa",
   "Intramuscular": "Intramuscular",
-  "Subcutaneous": "Subcutanea"
+  "Subcutaneous": "Subcutanea",
+  "Give Permissions To Roles Screen": "Tela de Dar Permissões as Funções",
+  "Users Screens" : "Tela de Usuários"
 }

@@ -8,7 +8,6 @@ use App\Enums\DayOfWeekEnum;
 use App\Services\Prescription\PrescriptionService;
 use App\Services\PrescriptionSchedule\PrescriptionScheduleService;
 use Carbon\Carbon;
-use Filament\Actions\ActionGroup;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteAction;
@@ -108,31 +107,29 @@ class PrescriptionsRelationManager extends RelationManager
                 //
             ])
             ->headerActions([
-                ActionGroup::make([
-                    CreateAction::make()
-                        ->action(function($data){
-                            DB::transaction(function() use ($data) {
-                            $dtoToCreatePrescription = new CreatePrescriptionDTO(
-                                patient_id: $this->ownerRecord->id,
-                                medicine_id: $data['medicine_id'],
-                                start_date: Carbon::parse($data['start_date']),
-                                end_date: Carbon::parse($data['end_date']),
-                                instructions: $data['instructions'],
+                CreateAction::make()
+                    ->action(function($data){
+                        DB::transaction(function() use ($data) {
+                        $dtoToCreatePrescription = new CreatePrescriptionDTO(
+                            patient_id: $this->ownerRecord->id,
+                            medicine_id: $data['medicine_id'],
+                            start_date: Carbon::parse($data['start_date']),
+                            end_date: Carbon::parse($data['end_date']),
+                            instructions: $data['instructions'],
+                        );
+                        $prescription = PrescriptionService::create($dtoToCreatePrescription);
+                        // Crate prescription schedules
+                        foreach ($data['prescription_schedules'] as $schedule) {
+                            $dtoToCreatePrescriptionSchedule = new CreatePrescriptionScheduleDTO(
+                                prescription_id: $prescription->getRecord()->id,
+                                day_of_week: $schedule['day_of_week'],
+                                time: $schedule['time'],
+                                quantity: $schedule['quantity'],
                             );
-                            $prescription = PrescriptionService::create($dtoToCreatePrescription);
-                            // Crate prescription schedules
-                            foreach ($data['prescription_schedules'] as $schedule) {
-                                $dtoToCreatePrescriptionSchedule = new CreatePrescriptionScheduleDTO(
-                                    prescription_id: $prescription->getRecord()->id,
-                                    day_of_week: $schedule['day_of_week'],
-                                    time: $schedule['time'],
-                                    quantity: $schedule['quantity'],
-                                );
-                                PrescriptionScheduleService::create($dtoToCreatePrescriptionSchedule);
-                            }
-                            });
-                        }),
-                ]),
+                            PrescriptionScheduleService::create($dtoToCreatePrescriptionSchedule);
+                        }
+                        });
+                    }),
             ])
             ->recordActions([
                 ActionGroup::make([

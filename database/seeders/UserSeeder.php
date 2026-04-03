@@ -30,11 +30,11 @@ class UserSeeder extends Seeder
         $operador = User::query()->firstOrCreate(
             [
                 'document_type' => DocumentTypeEnum::CPF->value,
-                'document_number' => '10987654321',
+                'document_number' => '1234',
             ],
             [
                 'name' => 'Operador Clinico',
-                'password' => Hash::make('123456'),
+                'password' => Hash::make('1234'),
                 'is_adm' => false,
             ]
         );

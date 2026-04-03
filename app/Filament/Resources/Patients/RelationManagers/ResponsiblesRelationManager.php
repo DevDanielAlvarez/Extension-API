@@ -5,7 +5,6 @@ namespace App\Filament\Resources\Patients\RelationManagers;
 use App\Filament\Resources\Responsibles\ResponsibleResource;
 use App\Filament\Resources\Responsibles\Schemas\ResponsibleForm;
 use Filament\Actions\Action;
-use Filament\Actions\ActionGroup;
 use Filament\Actions\AttachAction;
 use Filament\Actions\CreateAction;
 use Filament\Actions\DetachAction;
@@ -30,22 +29,20 @@ class ResponsiblesRelationManager extends RelationManager
                 ]),
             ])
             ->headerActions([
-                ActionGroup::make([
-                    AttachAction::make()
-                        ->recordTitle(fn($record) => $record->name . ' | ' . $record->document_type->value . ': ' . $record->document_number)
-                        ->preloadRecordSelect(),
-                    Action::make('create_responsible')
-                        ->label(__('Criar Responsável'))
-                        ->form(fn(Schema $schema) => ResponsibleForm::configure($schema))
-                        ->action(function ($data) {
-                            //create a responsible and attach him
-                            $this->getRelationship()->create($data);
-                            Notification::make()
-                                ->title(__('Responsável criado com sucesso'))
-                                ->success()
-                                ->send();
-                        }),
-                ]),
+                AttachAction::make()
+                    ->recordTitle(fn($record) => $record->name . ' | ' . $record->document_type->value . ': ' . $record->document_number)
+                    ->preloadRecordSelect(),
+                Action::make('create_responsible')
+                    ->label(__('Criar Responsável'))
+                    ->form(fn(Schema $schema) => ResponsibleForm::configure($schema))
+                    ->action(function ($data) {
+                        //create a responsible and attach him
+                        $this->getRelationship()->create($data);
+                        Notification::make()
+                            ->title(__('Responsável criado com sucesso'))
+                            ->success()
+                            ->send();
+                    }),
             ]);
     }
 }

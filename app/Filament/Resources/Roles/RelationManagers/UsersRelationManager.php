@@ -100,10 +100,8 @@ class UsersRelationManager extends RelationManager
                 //
             ])
             ->headerActions([
-                ActionGroup::make([
-                    AttachAction::make()
-                        ->preloadRecordSelect(),
-                ]),
+                AttachAction::make()
+                    ->preloadRecordSelect(),
             ])
             ->recordActions([
                 ActionGroup::make([

@@ -7,7 +7,6 @@ use App\Models\Permission;
 use App\Models\Role;
 use BackedEnum;
 use Filament\Actions\Action;
-use Filament\Actions\ActionGroup;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\ToggleButtons;
 use Filament\Forms\Concerns\InteractsWithForms;
@@ -44,31 +43,29 @@ class PermissionPage extends Page implements HasForms
     public function getHeaderActions(): array
     {
         return [
-            ActionGroup::make([
-                Action::make('activateAll')
-                    ->label(__('Ativar todas as permissões'))
-                    ->color('success')
-                    ->size('xl')
-                    ->visible(fn() => filled($this->data['role']) && filled($this->data['screen']))
-                    ->icon('heroicon-o-bolt')
-                    ->requiresConfirmation()
-                    ->action(fn() => $this->activeAll()),
-                Action::make('disableAll')
-                    ->label(__('Desativar todas as permissões'))
-                    ->color('danger')
-                    ->visible(fn() => filled($this->data['role']) && filled($this->data['screen']))
-                    ->size('xl')
-                    ->icon('heroicon-o-x-mark')
-                    ->requiresConfirmation()
-                    ->action(fn() => $this->disableAll()),
-                Action::make('save')
-                    ->label(__('Salvar alterações'))
-                    ->color('primary')
-                    ->visible(fn() => filled($this->data['role']) && filled($this->data['screen']))
-                    ->size('xl')
-                    ->icon('heroicon-o-check')
-                    ->action(fn() => $this->save()),
-            ]),
+            Action::make('activateAll')
+                ->label(__('Ativar todas as permissões'))
+                ->color('success')
+                ->size('xl')
+                ->visible(fn() => filled($this->data['role']) && filled($this->data['screen']))
+                ->icon('heroicon-o-bolt')
+                ->requiresConfirmation()
+                ->action(fn() => $this->activeAll()),
+            Action::make('disableAll')
+                ->label(__('Desativar todas as permissões'))
+                ->color('danger')
+                ->visible(fn() => filled($this->data['role']) && filled($this->data['screen']))
+                ->size('xl')
+                ->icon('heroicon-o-x-mark')
+                ->requiresConfirmation()
+                ->action(fn() => $this->disableAll()),
+            Action::make('save')
+                ->label(__('Salvar alterações'))
+                ->color('primary')
+                ->visible(fn() => filled($this->data['role']) && filled($this->data['screen']))
+                ->size('xl')
+                ->icon('heroicon-o-check')
+                ->action(fn() => $this->save()),
         ];
     }
 
@@ -285,12 +282,12 @@ class PermissionPage extends Page implements HasForms
 
     public function getTitle(): string|Htmlable
     {
-        return __('Dar Permissões às Funções');
+        return __('Dar Permissões as Funções');
     }
 
     public static function getNavigationLabel(): string
     {
-        return __('Dar Permissões às Funções');
+        return __('Dar Permissões as Funções');
     }
 
     public static function canAccess(): bool

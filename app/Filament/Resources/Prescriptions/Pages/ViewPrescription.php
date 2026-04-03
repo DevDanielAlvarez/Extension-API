@@ -3,7 +3,6 @@
 namespace App\Filament\Resources\Prescriptions\Pages;
 
 use App\Filament\Resources\Prescriptions\PrescriptionResource;
-use Filament\Actions\ActionGroup;
 use Filament\Actions\EditAction;
 use Filament\Resources\Pages\ViewRecord;
 
@@ -14,9 +13,7 @@ class ViewPrescription extends ViewRecord
     protected function getHeaderActions(): array
     {
         return [
-            ActionGroup::make([
-                EditAction::make(),
-            ]),
+            EditAction::make(),
         ];
     }
 }

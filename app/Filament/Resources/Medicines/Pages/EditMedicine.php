@@ -3,7 +3,6 @@
 namespace App\Filament\Resources\Medicines\Pages;
 
 use App\Filament\Resources\Medicines\MedicineResource;
-use Filament\Actions\ActionGroup;
 use Filament\Actions\DeleteAction;
 use Filament\Resources\Pages\EditRecord;
 
@@ -14,9 +13,7 @@ class EditMedicine extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
-            ActionGroup::make([
-                DeleteAction::make(),
-            ]),
+            DeleteAction::make(),
         ];
     }
 }
