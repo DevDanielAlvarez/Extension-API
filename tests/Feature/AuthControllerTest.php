@@ -186,4 +186,15 @@ describe('AuthController', function () {
                 ->assertJsonValidationErrors(['document_number', 'password']);
         });
     });
+
+    describe('Logout (POST /api/auth/logout)', function () {
+        it('logs out the authenticated user', function () {
+            $response = $this->postJson('/api/auth/logout');
+
+            $response->assertOk()
+                ->assertJson([
+                    'message' => 'Logged out successfully',
+                ]);
+        });
+    });
 });

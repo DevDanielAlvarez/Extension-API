@@ -67,6 +67,15 @@ namespace App\OpenApi;
  *     @OA\Response(response=200, description="Authenticated"),
  *     @OA\Response(response=401, description="Invalid credentials")
  * )
+
+ * @OA\Post(
+ *     path="/auth/logout",
+ *     tags={"Auth"},
+ *     summary="Logout",
+ *     operationId="authLogout",
+ *     security={{"bearerAuth":{}}},
+ *     @OA\Response(response=200, description="Logged out")
+ * )
  *
  * @OA\Get(
  *     path="/user",
