@@ -43,22 +43,14 @@ class RolesRelationManager extends RelationManager
                 //
             ])
             ->headerActions([
-                ActionGroup::make([
-                    CreateAction::make(),
                     AttachAction::make(),
-                ]),
             ])
             ->recordActions([
-                ActionGroup::make([
-                    EditAction::make(),
                     DetachAction::make(),
-                    DeleteAction::make(),
-                ]),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([
                     DetachBulkAction::make(),
-                    DeleteBulkAction::make(),
                 ]),
             ]);
     }

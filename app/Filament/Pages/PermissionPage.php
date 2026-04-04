@@ -292,6 +292,6 @@ class PermissionPage extends Page implements HasForms
 
     public static function canAccess(): bool
     {
-        return true;
+        return auth()->user()->hasPermission(Permission::where('screen', PermissionScreenEnum::GIVE_PERMISSIONS_TO_ROLES_SCREEN->value)->where('name', 'acessar')->first());
     }
 }
