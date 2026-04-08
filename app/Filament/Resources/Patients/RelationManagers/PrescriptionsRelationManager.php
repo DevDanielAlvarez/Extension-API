@@ -5,9 +5,11 @@ namespace App\Filament\Resources\Patients\RelationManagers;
 use App\DTO\Prescription\CreatePrescriptionDTO;
 use App\DTO\PrescriptionSchedule\CreatePrescriptionScheduleDTO;
 use App\Enums\DayOfWeekEnum;
+use App\Filament\Resources\Prescriptions\PrescriptionResource;
 use App\Services\Prescription\PrescriptionService;
 use App\Services\PrescriptionSchedule\PrescriptionScheduleService;
 use Carbon\Carbon;
+use Filament\Actions\ActionGroup;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteAction;
@@ -26,11 +28,19 @@ use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Schemas\Schema;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 
 class PrescriptionsRelationManager extends RelationManager
 {
     protected static string $relationship = 'prescriptions';
+
+    protected static ?string $relatedResource = PrescriptionResource::class;
+
+    public static function getTitle(Model $ownerRecord, string $pageClass): string
+    {
+        return __('Prescrições');
+    }
 
     public function form(Schema $schema): Schema
     {
@@ -84,6 +94,7 @@ class PrescriptionsRelationManager extends RelationManager
     public function table(Table $table): Table
     {
         return $table
+            ->heading('Prescrições')
             ->recordTitleAttribute('start_date')
             ->columns([
                 TextColumn::make('medicine.name')
@@ -108,6 +119,7 @@ class PrescriptionsRelationManager extends RelationManager
             ])
             ->headerActions([
                 CreateAction::make()
+                    ->label(__('Criar prescrição'))
                     ->action(function($data){
                         DB::transaction(function() use ($data) {
                         $dtoToCreatePrescription = new CreatePrescriptionDTO(

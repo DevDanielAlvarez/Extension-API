@@ -24,9 +24,7 @@ class ResponsiblesRelationManager extends RelationManager
     {
         return $table
             ->actions([
-                ActionGroup::make([
                     DetachAction::make(),
-                ]),
             ])
             ->headerActions([
                 AttachAction::make()
