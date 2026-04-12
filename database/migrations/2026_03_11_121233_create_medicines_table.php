@@ -20,6 +20,7 @@ return new class extends Migration {
             $table->string('route_of_administration'); // enum
             $table->text('additional_information')->nullable();
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

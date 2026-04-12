@@ -8,11 +8,12 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Patient extends Model
 {
     /** @use HasFactory<\Database\Factories\PatientFactory> */
-    use HasFactory, HasUlids;
+    use HasFactory, HasUlids, SoftDeletes;
 
     protected $fillable = [
         'name',
@@ -39,5 +40,22 @@ class Patient extends Model
     public function prescriptions(): HasMany
     {
         return $this->hasMany(Prescription::class);
+    }
+
+    protected static function booted(): void
+    {
+        static::deleting(function (self $patient): void {
+            if ($patient->isForceDeleting()) {
+                $patient->prescriptions()->withTrashed()->get()->each->forceDelete();
+
+                return;
+            }
+
+            $patient->prescriptions()->delete();
+        });
+
+        static::restoring(function (self $patient): void {
+            $patient->prescriptions()->onlyTrashed()->get()->each->restore();
+        });
     }
 }

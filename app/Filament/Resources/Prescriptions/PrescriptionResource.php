@@ -12,6 +12,8 @@ use App\Filament\Resources\Prescriptions\Schemas\PrescriptionInfolist;
 use App\Filament\Resources\Prescriptions\Tables\PrescriptionsTable;
 use App\Models\Prescription;
 use BackedEnum;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
@@ -63,5 +65,13 @@ class PrescriptionResource extends Resource
             'view' => ViewPrescription::route('/{record}'),
             'edit' => EditPrescription::route('/{record}/edit'),
         ];
+    }
+
+    public static function getEloquentQuery(): Builder
+    {
+        return parent::getEloquentQuery()
+            ->withoutGlobalScopes([
+                SoftDeletingScope::class,
+            ]);
     }
 }

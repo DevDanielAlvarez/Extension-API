@@ -11,6 +11,8 @@ use App\Filament\Resources\Patients\Schemas\PatientForm;
 use App\Filament\Resources\Patients\Tables\PatientsTable;
 use App\Models\Patient;
 use BackedEnum;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
@@ -59,5 +61,13 @@ class PatientResource extends Resource
             'create' => CreatePatient::route('/create'),
             'edit' => EditPatient::route('/{record}/edit'),
         ];
+    }
+
+    public static function getEloquentQuery(): Builder
+    {
+        return parent::getEloquentQuery()
+            ->withoutGlobalScopes([
+                SoftDeletingScope::class,
+            ]);
     }
 }

@@ -7,6 +7,16 @@ use App\Models\Permission;
 
 class PermissionController extends Controller
 {
+    public function index()
+    {
+        return response()->json(Permission::paginate(10));
+    }
+
+    public function show(string $permission)
+    {
+        return response()->json(Permission::findOrFail($permission));
+    }
+
     public function screens()
     {
         return response()->json(
@@ -29,5 +39,34 @@ class PermissionController extends Controller
                 ->groupBy('screen')
                 ->toArray()
         );
+    }
+
+    public function destroy(string $permission)
+    {
+        $record = Permission::findOrFail($permission);
+        $record->delete();
+
+        return response()->noContent();
+    }
+
+    public function trashed()
+    {
+        return response()->json(Permission::onlyTrashed()->paginate(10));
+    }
+
+    public function restore(string $permission)
+    {
+        $record = Permission::onlyTrashed()->findOrFail($permission);
+        $record->restore();
+
+        return response()->json($record->fresh());
+    }
+
+    public function forceDelete(string $permission)
+    {
+        $record = Permission::withTrashed()->findOrFail($permission);
+        $record->forceDelete();
+
+        return response()->noContent();
     }
 }

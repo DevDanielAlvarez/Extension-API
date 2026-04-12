@@ -29,6 +29,11 @@ class PatientController extends Controller
         return PatientResource::collection(Patient::paginate(10));
     }
 
+    public function trashed()
+    {
+        return PatientResource::collection(Patient::onlyTrashed()->paginate(10));
+    }
+
     public function store(CreatePatientFormRequest $request)
     {
         $validatedData = $request->validated();
@@ -169,6 +174,22 @@ class PatientController extends Controller
     {
         $patientService = PatientService::find($patient);
         $patientService->delete();
+
+        return response()->noContent();
+    }
+
+    public function restore(string $patient)
+    {
+        $record = Patient::onlyTrashed()->findOrFail($patient);
+        $record->restore();
+
+        return PatientResource::make($record->fresh());
+    }
+
+    public function forceDelete(string $patient)
+    {
+        $record = Patient::withTrashed()->findOrFail($patient);
+        $record->forceDelete();
 
         return response()->noContent();
     }

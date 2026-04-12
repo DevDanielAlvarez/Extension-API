@@ -527,6 +527,83 @@
                 ]
             }
         },
+        "/users/trashed": {
+            "get": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "List soft-deleted users",
+                "operationId": "usersTrashed",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/users/{user}/restore": {
+            "post": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Restore soft-deleted user",
+                "operationId": "usersRestore",
+                "parameters": [
+                    {
+                        "name": "user",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Restored"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/users/{user}/force-delete": {
+            "delete": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Force delete user",
+                "operationId": "usersForceDelete",
+                "parameters": [
+                    {
+                        "name": "user",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No content"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
         "/patients": {
             "get": {
                 "tags": [
@@ -833,6 +910,83 @@
                 ]
             }
         },
+        "/patients/trashed": {
+            "get": {
+                "tags": [
+                    "Patients"
+                ],
+                "summary": "List soft-deleted patients",
+                "operationId": "patientsTrashed",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/patients/{patient}/restore": {
+            "post": {
+                "tags": [
+                    "Patients"
+                ],
+                "summary": "Restore soft-deleted patient",
+                "operationId": "patientsRestore",
+                "parameters": [
+                    {
+                        "name": "patient",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Restored"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/patients/{patient}/force-delete": {
+            "delete": {
+                "tags": [
+                    "Patients"
+                ],
+                "summary": "Force delete patient",
+                "operationId": "patientsForceDelete",
+                "parameters": [
+                    {
+                        "name": "patient",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No content"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
         "/responsibles": {
             "get": {
                 "tags": [
@@ -1073,6 +1227,83 @@
                 ]
             }
         },
+        "/responsibles/trashed": {
+            "get": {
+                "tags": [
+                    "Responsibles"
+                ],
+                "summary": "List soft-deleted responsibles",
+                "operationId": "responsiblesTrashed",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/responsibles/{responsible}/restore": {
+            "post": {
+                "tags": [
+                    "Responsibles"
+                ],
+                "summary": "Restore soft-deleted responsible",
+                "operationId": "responsiblesRestore",
+                "parameters": [
+                    {
+                        "name": "responsible",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Restored"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/responsibles/{responsible}/force-delete": {
+            "delete": {
+                "tags": [
+                    "Responsibles"
+                ],
+                "summary": "Force delete responsible",
+                "operationId": "responsiblesForceDelete",
+                "parameters": [
+                    {
+                        "name": "responsible",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No content"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
         "/medicines": {
             "get": {
                 "tags": [
@@ -1190,6 +1421,83 @@
                 ],
                 "summary": "Delete medicine",
                 "operationId": "medicinesDestroy",
+                "parameters": [
+                    {
+                        "name": "medicine",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No content"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/medicines/trashed": {
+            "get": {
+                "tags": [
+                    "Medicines"
+                ],
+                "summary": "List soft-deleted medicines",
+                "operationId": "medicinesTrashed",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/medicines/{medicine}/restore": {
+            "post": {
+                "tags": [
+                    "Medicines"
+                ],
+                "summary": "Restore soft-deleted medicine",
+                "operationId": "medicinesRestore",
+                "parameters": [
+                    {
+                        "name": "medicine",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Restored"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/medicines/{medicine}/force-delete": {
+            "delete": {
+                "tags": [
+                    "Medicines"
+                ],
+                "summary": "Force delete medicine",
+                "operationId": "medicinesForceDelete",
                 "parameters": [
                     {
                         "name": "medicine",
@@ -1634,6 +1942,83 @@
                 ]
             }
         },
+        "/roles/trashed": {
+            "get": {
+                "tags": [
+                    "Roles"
+                ],
+                "summary": "List soft-deleted roles",
+                "operationId": "rolesTrashed",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/roles/{role}/restore": {
+            "post": {
+                "tags": [
+                    "Roles"
+                ],
+                "summary": "Restore soft-deleted role",
+                "operationId": "rolesRestore",
+                "parameters": [
+                    {
+                        "name": "role",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Restored"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/roles/{role}/force-delete": {
+            "delete": {
+                "tags": [
+                    "Roles"
+                ],
+                "summary": "Force delete role",
+                "operationId": "rolesForceDelete",
+                "parameters": [
+                    {
+                        "name": "role",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No content"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
         "/prescriptions": {
             "get": {
                 "tags": [
@@ -1802,6 +2187,83 @@
                 ]
             }
         },
+        "/prescriptions/trashed": {
+            "get": {
+                "tags": [
+                    "Prescriptions"
+                ],
+                "summary": "List soft-deleted prescriptions",
+                "operationId": "prescriptionsTrashed",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/prescriptions/{prescription}/restore": {
+            "post": {
+                "tags": [
+                    "Prescriptions"
+                ],
+                "summary": "Restore soft-deleted prescription",
+                "operationId": "prescriptionsRestore",
+                "parameters": [
+                    {
+                        "name": "prescription",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Restored"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/prescriptions/{prescription}/force-delete": {
+            "delete": {
+                "tags": [
+                    "Prescriptions"
+                ],
+                "summary": "Force delete prescription",
+                "operationId": "prescriptionsForceDelete",
+                "parameters": [
+                    {
+                        "name": "prescription",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No content"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
         "/prescription-schedules": {
             "get": {
                 "tags": [
@@ -1922,6 +2384,235 @@
                 "parameters": [
                     {
                         "name": "prescription_schedule",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No content"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/prescription-schedules/trashed": {
+            "get": {
+                "tags": [
+                    "Prescription Schedules"
+                ],
+                "summary": "List soft-deleted prescription schedules",
+                "operationId": "prescriptionSchedulesTrashed",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/prescription-schedules/{prescriptionSchedule}/restore": {
+            "post": {
+                "tags": [
+                    "Prescription Schedules"
+                ],
+                "summary": "Restore soft-deleted prescription schedule",
+                "operationId": "prescriptionSchedulesRestore",
+                "parameters": [
+                    {
+                        "name": "prescriptionSchedule",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Restored"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/prescription-schedules/{prescriptionSchedule}/force-delete": {
+            "delete": {
+                "tags": [
+                    "Prescription Schedules"
+                ],
+                "summary": "Force delete prescription schedule",
+                "operationId": "prescriptionSchedulesForceDelete",
+                "parameters": [
+                    {
+                        "name": "prescriptionSchedule",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No content"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/permissions": {
+            "get": {
+                "tags": [
+                    "Permissions"
+                ],
+                "summary": "List permissions",
+                "operationId": "permissionsIndex",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/permissions/{permission}": {
+            "get": {
+                "tags": [
+                    "Permissions"
+                ],
+                "summary": "Show permission",
+                "operationId": "permissionsShow",
+                "parameters": [
+                    {
+                        "name": "permission",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Permissions"
+                ],
+                "summary": "Delete permission",
+                "operationId": "permissionsDestroy",
+                "parameters": [
+                    {
+                        "name": "permission",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No content"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/permissions/trashed": {
+            "get": {
+                "tags": [
+                    "Permissions"
+                ],
+                "summary": "List soft-deleted permissions",
+                "operationId": "permissionsTrashed",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/permissions/{permission}/restore": {
+            "post": {
+                "tags": [
+                    "Permissions"
+                ],
+                "summary": "Restore soft-deleted permission",
+                "operationId": "permissionsRestore",
+                "parameters": [
+                    {
+                        "name": "permission",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Restored"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/permissions/{permission}/force-delete": {
+            "delete": {
+                "tags": [
+                    "Permissions"
+                ],
+                "summary": "Force delete permission",
+                "operationId": "permissionsForceDelete",
+                "parameters": [
+                    {
+                        "name": "permission",
                         "in": "path",
                         "required": true,
                         "schema": {

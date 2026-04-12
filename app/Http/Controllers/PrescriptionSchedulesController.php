@@ -21,6 +21,11 @@ class PrescriptionSchedulesController extends Controller
         return PrescriptionScheduleResource::collection(PrescriptionSchedule::paginate(10));
     }
 
+    public function trashed()
+    {
+        return PrescriptionScheduleResource::collection(PrescriptionSchedule::onlyTrashed()->paginate(10));
+    }
+
     /**
      * Store a newly created resource in storage.
      */
@@ -86,6 +91,22 @@ class PrescriptionSchedulesController extends Controller
     {
         $scheduleService = PrescriptionScheduleService::find($id);
         $scheduleService->delete();
+
+        return response()->noContent();
+    }
+
+    public function restore(string $prescriptionSchedule)
+    {
+        $record = PrescriptionSchedule::onlyTrashed()->findOrFail($prescriptionSchedule);
+        $record->restore();
+
+        return PrescriptionScheduleResource::make($record->fresh());
+    }
+
+    public function forceDelete(string $prescriptionSchedule)
+    {
+        $record = PrescriptionSchedule::withTrashed()->findOrFail($prescriptionSchedule);
+        $record->forceDelete();
 
         return response()->noContent();
     }

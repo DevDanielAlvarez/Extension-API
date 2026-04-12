@@ -23,6 +23,11 @@ class PrescriptionController extends Controller
         return PrescriptionResource::collection(Prescription::paginate(10));
     }
 
+    public function trashed()
+    {
+        return PrescriptionResource::collection(Prescription::onlyTrashed()->paginate(10));
+    }
+
     /**
      * Store a newly created resource in storage.
      */
@@ -90,6 +95,22 @@ class PrescriptionController extends Controller
     {
         $prescriptionService = PrescriptionService::find($id);
         $prescriptionService->delete();
+
+        return response()->noContent();
+    }
+
+    public function restore(string $prescription)
+    {
+        $record = Prescription::onlyTrashed()->findOrFail($prescription);
+        $record->restore();
+
+        return PrescriptionResource::make($record->fresh());
+    }
+
+    public function forceDelete(string $prescription)
+    {
+        $record = Prescription::withTrashed()->findOrFail($prescription);
+        $record->forceDelete();
 
         return response()->noContent();
     }

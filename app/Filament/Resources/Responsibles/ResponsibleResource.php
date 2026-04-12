@@ -9,6 +9,8 @@ use App\Filament\Resources\Responsibles\Schemas\ResponsibleForm;
 use App\Filament\Resources\Responsibles\Tables\ResponsiblesTable;
 use App\Models\Responsible;
 use BackedEnum;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
@@ -56,5 +58,13 @@ class ResponsibleResource extends Resource
             'create' => CreateResponsible::route('/create'),
             'edit' => EditResponsible::route('/{record}/edit'),
         ];
+    }
+
+    public static function getEloquentQuery(): Builder
+    {
+        return parent::getEloquentQuery()
+            ->withoutGlobalScopes([
+                SoftDeletingScope::class,
+            ]);
     }
 }

@@ -20,6 +20,7 @@ return new class extends Migration {
             $table->string('phone')->nullable();
             $table->json('nursing_report')->nullable();
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

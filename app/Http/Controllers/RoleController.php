@@ -24,6 +24,11 @@ class RoleController extends Controller
         return RoleResource::collection(Role::paginate(10));
     }
 
+    public function trashed()
+    {
+        return RoleResource::collection(Role::onlyTrashed()->paginate(10));
+    }
+
     public function store(CreateRoleFormRequest $request)
     {
         $validatedData = $request->validated();
@@ -73,6 +78,22 @@ class RoleController extends Controller
             $roleService = RoleService::find($role);
             $roleService->delete();
         });
+
+        return response()->noContent();
+    }
+
+    public function restore(string $role)
+    {
+        $record = Role::onlyTrashed()->findOrFail($role);
+        $record->restore();
+
+        return RoleResource::make($record->fresh());
+    }
+
+    public function forceDelete(string $role)
+    {
+        $record = Role::withTrashed()->findOrFail($role);
+        $record->forceDelete();
 
         return response()->noContent();
     }

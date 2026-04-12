@@ -41,4 +41,9 @@ class UserService
         $this->record->update($dtoToUpdate->toArray());
         return $this;
     }
+
+    public function delete(): void
+    {
+        $this->record->delete();
+    }
 }

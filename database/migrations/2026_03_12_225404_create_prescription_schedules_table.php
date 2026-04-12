@@ -17,6 +17,7 @@ return new class extends Migration {
             $table->time('time');
             $table->integer('quantity');
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

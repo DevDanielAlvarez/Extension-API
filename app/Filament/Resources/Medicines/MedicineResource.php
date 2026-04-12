@@ -9,6 +9,8 @@ use App\Filament\Resources\Medicines\Schemas\MedicineForm;
 use App\Filament\Resources\Medicines\Tables\MedicinesTable;
 use App\Models\Medicine;
 use BackedEnum;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
@@ -56,5 +58,13 @@ class MedicineResource extends Resource
             'create' => CreateMedicine::route('/create'),
             'edit' => EditMedicine::route('/{record}/edit'),
         ];
+    }
+
+    public static function getEloquentQuery(): Builder
+    {
+        return parent::getEloquentQuery()
+            ->withoutGlobalScopes([
+                SoftDeletingScope::class,
+            ]);
     }
 }

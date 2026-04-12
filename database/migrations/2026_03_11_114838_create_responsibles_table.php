@@ -17,6 +17,7 @@ return new class extends Migration {
             $table->string('document_number');
             $table->string('phone')->nullable();
             $table->timestamps();
+            $table->softDeletes();
 
             $table->unique(['document_type', 'document_number']);
         });

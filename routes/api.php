@@ -26,13 +26,49 @@ Route::prefix('auth')->group(function () {
 });
 
 Route::middleware('auth:sanctum')->group(function () {
+    Route::get('users/trashed', [UserController::class, 'trashed']);
+    Route::post('users/{user}/restore', [UserController::class, 'restore']);
+    Route::delete('users/{user}/force-delete', [UserController::class, 'forceDelete']);
     Route::apiResource('users', UserController::class);
+
+    Route::get('patients/trashed', [PatientController::class, 'trashed']);
+    Route::post('patients/{patient}/restore', [PatientController::class, 'restore']);
+    Route::delete('patients/{patient}/force-delete', [PatientController::class, 'forceDelete']);
     Route::apiResource('patients', PatientController::class);
+
+    Route::get('responsibles/trashed', [ResponsibleController::class, 'trashed']);
+    Route::post('responsibles/{responsible}/restore', [ResponsibleController::class, 'restore']);
+    Route::delete('responsibles/{responsible}/force-delete', [ResponsibleController::class, 'forceDelete']);
     Route::apiResource('responsibles', ResponsibleController::class);
+
+    Route::get('medicines/trashed', [MedicineController::class, 'trashed']);
+    Route::post('medicines/{medicine}/restore', [MedicineController::class, 'restore']);
+    Route::delete('medicines/{medicine}/force-delete', [MedicineController::class, 'forceDelete']);
     Route::apiResource('medicines', MedicineController::class);
+
+    Route::get('roles/trashed', [RoleController::class, 'trashed']);
+    Route::post('roles/{role}/restore', [RoleController::class, 'restore']);
+    Route::delete('roles/{role}/force-delete', [RoleController::class, 'forceDelete']);
     Route::apiResource('roles', RoleController::class);
+
+    Route::get('prescriptions/trashed', [PrescriptionController::class, 'trashed']);
+    Route::post('prescriptions/{prescription}/restore', [PrescriptionController::class, 'restore']);
+    Route::delete('prescriptions/{prescription}/force-delete', [PrescriptionController::class, 'forceDelete']);
     Route::apiResource('prescriptions', PrescriptionController::class);
+
+    Route::get('prescription-schedules/trashed', [PrescriptionSchedulesController::class, 'trashed']);
+    Route::post('prescription-schedules/{prescriptionSchedule}/restore', [PrescriptionSchedulesController::class, 'restore']);
+    Route::delete('prescription-schedules/{prescriptionSchedule}/force-delete', [PrescriptionSchedulesController::class, 'forceDelete']);
     Route::apiResource('prescription-schedules', PrescriptionSchedulesController::class);
+
+    Route::get('permissions', [PermissionController::class, 'index']);
+    Route::get('permissions/trashed', [PermissionController::class, 'trashed']);
+    Route::get('permissions/screens', [PermissionController::class, 'screens']);
+    Route::get('permissions/grouped', [PermissionController::class, 'grouped']);
+    Route::get('permissions/{permission}', [PermissionController::class, 'show']);
+    Route::delete('permissions/{permission}', [PermissionController::class, 'destroy']);
+    Route::post('permissions/{permission}/restore', [PermissionController::class, 'restore']);
+    Route::delete('permissions/{permission}/force-delete', [PermissionController::class, 'forceDelete']);
 
     Route::post('patients/{patient}/responsibles/{responsible}', [PatientController::class, 'attachResponsible']);
     Route::post('responsibles/{responsible}/patients/{patient}', [ResponsibleController::class, 'attachPatient']);
@@ -54,8 +90,6 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('roles/{role}/users/{user}', [RoleController::class, 'attachUser']);
     Route::delete('roles/{role}/users/{user}', [RoleController::class, 'detachUser']);
 
-    Route::get('permissions/screens', [PermissionController::class, 'screens']);
-    Route::get('permissions/grouped', [PermissionController::class, 'grouped']);
     Route::get('roles/{role}/permissions', [RoleController::class, 'permissionsByScreen']);
     Route::put('roles/{role}/permissions', [RoleController::class, 'syncPermissionsByScreen']);
     Route::post('roles/{role}/permissions/activate-all', [RoleController::class, 'activateAllPermissionsByScreen']);

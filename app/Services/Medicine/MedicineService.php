@@ -37,4 +37,9 @@ class MedicineService
 
         return $this;
     }
+
+    public function delete(): void
+    {
+        $this->record->delete();
+    }
 }

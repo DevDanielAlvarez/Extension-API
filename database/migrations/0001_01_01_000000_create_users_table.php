@@ -19,6 +19,7 @@ return new class extends Migration {
             $table->boolean('is_adm')->default(false);
             $table->rememberToken();
             $table->timestamps();
+            $table->softDeletes();
 
             $table->unique(['document_type', 'document_number']);
         });

@@ -24,6 +24,11 @@ class UserController extends Controller
         return UserResource::collection(User::paginate(10));
     }
 
+    public function trashed()
+    {
+        return UserResource::collection(User::onlyTrashed()->paginate(10));
+    }
+
     /**
      * Store a newly created resource in storage.
      */
@@ -86,6 +91,22 @@ class UserController extends Controller
     {
         $userService = UserService::find($id);
         $userService->getRecord()->delete();
+
+        return response()->noContent();
+    }
+
+    public function restore(string $id)
+    {
+        $user = User::onlyTrashed()->findOrFail($id);
+        $user->restore();
+
+        return UserResource::make($user->fresh());
+    }
+
+    public function forceDelete(string $id)
+    {
+        $user = User::withTrashed()->findOrFail($id);
+        $user->forceDelete();
 
         return response()->noContent();
     }

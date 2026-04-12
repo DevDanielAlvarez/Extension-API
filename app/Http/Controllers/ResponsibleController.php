@@ -21,6 +21,11 @@ class ResponsibleController extends Controller
         return ResponsibleResource::collection(Responsible::paginate(10));
     }
 
+    public function trashed()
+    {
+        return ResponsibleResource::collection(Responsible::onlyTrashed()->paginate(10));
+    }
+
     public function store(CreateResponsibleFormRequest $request)
     {
         $validatedData = $request->validated();
@@ -74,6 +79,22 @@ class ResponsibleController extends Controller
     {
         $responsibleService = ResponsibleService::find($responsible);
         $responsibleService->delete();
+
+        return response()->noContent();
+    }
+
+    public function restore(string $responsible)
+    {
+        $record = Responsible::onlyTrashed()->findOrFail($responsible);
+        $record->restore();
+
+        return ResponsibleResource::make($record->fresh());
+    }
+
+    public function forceDelete(string $responsible)
+    {
+        $record = Responsible::withTrashed()->findOrFail($responsible);
+        $record->forceDelete();
 
         return response()->noContent();
     }

@@ -2,17 +2,21 @@
 
 namespace App\Filament\Resources\Prescriptions\RelationManagers;
 
-use App\Filament\Resources\Prescriptions\PrescriptionResource;
 use Carbon\Carbon;
 use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteAction;
+use Filament\Actions\ForceDeleteAction;
+use Filament\Actions\RestoreAction;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\TimePicker;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\TrashedFilter;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class PrescriptionSchedulesRelationManager extends RelationManager
 {
@@ -73,8 +77,13 @@ class PrescriptionSchedulesRelationManager extends RelationManager
                 TextColumn::make('quantity')
                     ->translateLabel(),
             ])
+            ->filters([
+                TrashedFilter::make(),
+            ])
             ->actions([
-                DeleteAction::make()
+                DeleteAction::make(),
+                RestoreAction::make(),
+                ForceDeleteAction::make(),
             ])
             ->headerActions([
                 CreateAction::make()
@@ -82,6 +91,13 @@ class PrescriptionSchedulesRelationManager extends RelationManager
                     ->modalHeading('Adicionar horário')
                     ->form(fn($schema) => $this->form($schema)),
             ]);
+    }
+
+    protected function modifyQueryUsing(Builder $query): Builder
+    {
+        return $query->withoutGlobalScopes([
+            SoftDeletingScope::class,
+        ]);
     }
 
     public static function getTitle(Model $ownerRecord, string $pageClass): string

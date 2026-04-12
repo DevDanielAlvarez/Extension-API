@@ -20,6 +20,11 @@ class MedicineController extends Controller
         return MedicineResource::collection(Medicine::paginate(10));
     }
 
+    public function trashed()
+    {
+        return MedicineResource::collection(Medicine::onlyTrashed()->paginate(10));
+    }
+
     public function store(CreateMedicineFormRequest $request)
     {
         $validatedData = $request->validated();
@@ -79,6 +84,22 @@ class MedicineController extends Controller
     {
         $medicineService = MedicineService::find($id);
         $medicineService->getRecord()->delete();
+
+        return response()->noContent();
+    }
+
+    public function restore(string $medicine)
+    {
+        $record = Medicine::onlyTrashed()->findOrFail($medicine);
+        $record->restore();
+
+        return MedicineResource::make($record->fresh());
+    }
+
+    public function forceDelete(string $medicine)
+    {
+        $record = Medicine::withTrashed()->findOrFail($medicine);
+        $record->forceDelete();
 
         return response()->noContent();
     }
