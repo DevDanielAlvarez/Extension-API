@@ -122,3 +122,22 @@ php artisan migrate:fresh --seed
 ```bash
 tail -f storage/logs/laravel.log
 ```
+
+## Documentacao de Fluxo e Arquitetura
+
+Para acelerar onboarding e entendimento de regras de negocio, consulte:
+
+- `docs/01-visao-geral.md`
+- `docs/02-arquitetura.md`
+- `docs/03-fluxos-de-negocio.md`
+- `docs/04-api.md`
+- `docs/05-regras-de-autorizacao.md`
+- `docs/06-glossario.md`
+- `docs/07-playbook-ia-documentacao.md`
+- `docs/08-checklist-pr-documentacao.md`
+
+Sugestao de leitura rapida:
+1. Visao geral
+2. Arquitetura
+3. Fluxos de negocio
+4. API e autorizacao
