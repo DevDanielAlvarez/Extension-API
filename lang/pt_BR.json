@@ -259,5 +259,11 @@
   "Subcutaneous": "Subcutanea",
   "Give Permissions To Roles Screen": "Tela de Dar Permissões as Funções",
   "Users Screens" : "Tela de Usuários",
-  "Prescriptions" : "Prescrições"
+  "Prescriptions" : "Prescrições",
+  "MG": "MG",
+  "MCG": "MCG",
+  "G": "G",
+  "ML": "ML",
+  "IU": "IU",
+  "UNIT": "UNIDADE"
 }
