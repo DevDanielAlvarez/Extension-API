@@ -18,17 +18,22 @@ class PrescriptionInfolist
                 TextEntry::make('medicine.name')
                             ->label(__('Medicine')),
                 TextEntry::make('start_date')
+                    ->translateLabel()
                     ->date(),
                 TextEntry::make('end_date')
+                    ->translateLabel()
                     ->date()
                     ->placeholder('-'),
                 TextEntry::make('instructions')
+                    ->translateLabel()
                     ->placeholder('-')
                     ->columnSpanFull(),
                 TextEntry::make('created_at')
+                    ->translateLabel()
                     ->dateTime()
                     ->placeholder('-'),
                 TextEntry::make('updated_at')
+                    ->translateLabel()
                     ->dateTime()
                     ->placeholder('-'),
             ]);
