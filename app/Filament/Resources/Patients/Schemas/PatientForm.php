@@ -4,6 +4,7 @@ namespace App\Filament\Resources\Patients\Schemas;
 
 use App\Enums\DocumentTypeEnum;
 use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\KeyValue;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Textarea;
@@ -55,10 +56,8 @@ class PatientForm
                             ->tel()
                             ->placeholder('Ex.: (11) 99999-9999')
                             ->maxLength(30),
-                        Textarea::make('nursing_report')
+                        KeyValue::make('nursing_report')
                             ->translateLabel()
-                            ->rows(4)
-                            ->placeholder('Observações de enfermagem...')
                             ->columnSpanFull(),
                     ]),
             ]);
