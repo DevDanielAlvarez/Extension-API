@@ -23,7 +23,7 @@ class PrescriptionResource extends Resource
 {
     protected static ?string $model = Prescription::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedDocumentText;
 
     public static function getModelLabel(): string
     {
