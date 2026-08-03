@@ -2,9 +2,7 @@
 
 namespace App\Http\Requests;
 
-use App\Enums\DocumentTypeEnum;
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Validation\Rules\Enum;
 
 class LoginFormRequest extends FormRequest
 {
@@ -24,7 +22,6 @@ class LoginFormRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'document_type' => [new Enum(DocumentTypeEnum::class), 'required'],
             'document_number' => 'required|string|max:255',
             'password' => 'required|string',
         ];

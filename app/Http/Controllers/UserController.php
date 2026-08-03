@@ -38,7 +38,7 @@ class UserController extends Controller
         $result = DB::transaction(function () use ($validatedData) {
             $dtoToCreate = new CreateUserDTO(
                 name: $validatedData['name'],
-                document_type: DocumentTypeEnum::from($validatedData['document_type']),
+                document_type: DocumentTypeEnum::CPF,
                 document_number: $validatedData['document_number'],
                 password: $validatedData['password']
             );
@@ -70,7 +70,7 @@ class UserController extends Controller
             $dtoToUpdate = new UpdateUserDTO(
                 id: $id,
                 name: $validatedData['name'],
-                document_type: DocumentTypeEnum::from($validatedData['document_type']),
+                document_type: DocumentTypeEnum::CPF,
                 document_number: $validatedData['document_number'],
                 password: $validatedData['password'] ?? null
             );

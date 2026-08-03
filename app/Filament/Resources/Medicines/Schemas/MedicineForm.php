@@ -40,6 +40,7 @@ class MedicineForm
                             ->native(false)
                             ->searchable()
                             ->preload()
+                            ->helperText('Unidade de medida do conteúdo (ex.: MG, ML).')
                             ->required(),
                         TextInput::make('strength')
                             ->translateLabel()
@@ -51,6 +52,7 @@ class MedicineForm
                             ->native(false)
                             ->searchable()
                             ->preload()
+                            ->helperText('Como o medicamento é administrado ao paciente.')
                             ->required(),
                         Toggle::make('is_compounded')
                             ->translateLabel()

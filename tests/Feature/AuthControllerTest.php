@@ -9,7 +9,6 @@ describe('AuthController', function () {
         it('registers a user with valid data', function () {
             $data = [
                 'name' => 'John Doe',
-                'document_type' => DocumentTypeEnum::CPF->value,
                 'document_number' => '12345678901',
                 'password' => 'Password@123',
                 'password_confirmation' => 'Password@123',
@@ -40,26 +39,12 @@ describe('AuthController', function () {
             ]);
 
             $response->assertStatus(422)
-                ->assertJsonValidationErrors(['document_type', 'document_number', 'password']);
-        });
-
-        it('fails with invalid document type', function () {
-            $response = $this->postJson('/api/auth/register', [
-                'name' => 'John Doe',
-                'document_type' => 'INVALID',
-                'document_number' => '12345678901',
-                'password' => 'Password@123',
-                'password_confirmation' => 'Password@123',
-            ]);
-
-            $response->assertStatus(422)
-                ->assertJsonValidationErrors(['document_type']);
+                ->assertJsonValidationErrors(['document_number', 'password']);
         });
 
         it('fails with weak password', function () {
             $response = $this->postJson('/api/auth/register', [
                 'name' => 'John Doe',
-                'document_type' => DocumentTypeEnum::CPF->value,
                 'document_number' => '12345678901',
                 'password' => 'weak',
                 'password_confirmation' => 'weak',
@@ -77,7 +62,6 @@ describe('AuthController', function () {
 
             $response = $this->postJson('/api/auth/register', [
                 'name' => 'Jane Doe',
-                'document_type' => DocumentTypeEnum::CPF->value,
                 'document_number' => '12345678901',
                 'password' => 'Password@123',
                 'password_confirmation' => 'Password@123',
@@ -90,7 +74,6 @@ describe('AuthController', function () {
         it('fails with mismatched password confirmation', function () {
             $response = $this->postJson('/api/auth/register', [
                 'name' => 'John Doe',
-                'document_type' => DocumentTypeEnum::CPF->value,
                 'document_number' => '12345678901',
                 'password' => 'Password@123',
                 'password_confirmation' => 'DifferentPassword@123',
@@ -110,7 +93,6 @@ describe('AuthController', function () {
             ]);
 
             $response = $this->postJson('/api/auth/login', [
-                'document_type' => $user->document_type->value,
                 'document_number' => $user->document_number,
                 'password' => 'Password@123',
             ]);
@@ -142,7 +124,6 @@ describe('AuthController', function () {
             ]);
 
             $response = $this->postJson('/api/auth/login', [
-                'document_type' => $user->document_type->value,
                 'document_number' => $user->document_number,
                 'password' => 'WrongPassword@123',
             ]);
@@ -155,7 +136,6 @@ describe('AuthController', function () {
 
         it('fails when user does not exist', function () {
             $response = $this->postJson('/api/auth/login', [
-                'document_type' => DocumentTypeEnum::CPF->value,
                 'document_number' => '99999999999',
                 'password' => 'Password@123',
             ]);
@@ -166,21 +146,26 @@ describe('AuthController', function () {
                 ]);
         });
 
-        it('fails with invalid document type', function () {
+        it('ignores a matching CNPJ user and only authenticates by CPF', function () {
+            User::factory()->create([
+                'document_type' => DocumentTypeEnum::CNPJ->value,
+                'document_number' => '12345678901',
+                'password' => Hash::make('Password@123'),
+            ]);
+
             $response = $this->postJson('/api/auth/login', [
-                'document_type' => 'INVALID',
                 'document_number' => '12345678901',
                 'password' => 'Password@123',
             ]);
 
-            $response->assertStatus(422)
-                ->assertJsonValidationErrors(['document_type']);
+            $response->assertStatus(401)
+                ->assertJson([
+                    'message' => 'Invalid credentials',
+                ]);
         });
 
         it('fails with missing required fields', function () {
-            $response = $this->postJson('/api/auth/login', [
-                'document_type' => DocumentTypeEnum::CPF->value,
-            ]);
+            $response = $this->postJson('/api/auth/login', []);
 
             $response->assertStatus(422)
                 ->assertJsonValidationErrors(['document_number', 'password']);

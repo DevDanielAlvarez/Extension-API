@@ -45,6 +45,8 @@ class ResponsiblesTable
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
+            ->emptyStateHeading(__('Nenhum responsável cadastrado'))
+            ->emptyStateDescription(__('Cadastre o primeiro responsável clicando no botão acima.'))
             ->filters([
                 TrashedFilter::make(),
             ])
@@ -53,7 +55,9 @@ class ResponsiblesTable
                     EditAction::make(),
                     DeleteAction::make(),
                     RestoreAction::make(),
-                    ForceDeleteAction::make(),
+                    ForceDeleteAction::make()
+                        ->modalHeading(__('Excluir responsável permanentemente'))
+                        ->modalDescription(__('Todos os dados desse responsável serão excluídos permanentemente.')),
                 ]),
             ])
             ->toolbarActions([

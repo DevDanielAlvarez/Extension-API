@@ -35,7 +35,8 @@ class PrescriptionForm
                     ->translateLabel()
                     ->required(),
                 DatePicker::make('end_date')
-                    ->translateLabel(),
+                    ->translateLabel()
+                    ->helperText(__('Leave blank for continuous use.')),
                 Textarea::make('instructions')
                     ->translateLabel()
                     ->columnSpanFull(),

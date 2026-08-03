@@ -12,6 +12,7 @@ use App\Filament\Resources\Patients\Tables\PatientsTable;
 use App\Models\Patient;
 use BackedEnum;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
@@ -26,6 +27,11 @@ class PatientResource extends Resource
 
     protected static ?string $recordTitleAttribute = 'name';
 
+    public static function getNavigationGroup(): ?string
+    {
+        return __('Cuidado ao Paciente');
+    }
+
     public static function getModelLabel(): string
     {
         return __('Paciente');
@@ -34,6 +40,18 @@ class PatientResource extends Resource
     public static function getPluralModelLabel(): string
     {
         return __('Pacientes');
+    }
+
+    public static function getGloballySearchableAttributes(): array
+    {
+        return ['name', 'document_number'];
+    }
+
+    public static function getGlobalSearchResultDetails(Model $record): array
+    {
+        return [
+            __('Document') => $record->document_type->value . ': ' . $record->document_number,
+        ];
     }
 
     public static function form(Schema $schema): Schema

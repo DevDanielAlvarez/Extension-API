@@ -50,6 +50,8 @@ class UsersTable
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
+            ->emptyStateHeading(__('Nenhum usuário cadastrado'))
+            ->emptyStateDescription(__('Cadastre o primeiro usuário clicando no botão acima.'))
             ->filters([
                 TrashedFilter::make(),
             ])
@@ -58,7 +60,9 @@ class UsersTable
                     EditAction::make(),
                     DeleteAction::make(),
                     RestoreAction::make(),
-                    ForceDeleteAction::make(),
+                    ForceDeleteAction::make()
+                        ->modalHeading(__('Excluir usuário permanentemente'))
+                        ->modalDescription(__('Todos os dados desse usuário serão excluídos permanentemente.')),
                 ]),
             ])
             ->toolbarActions([

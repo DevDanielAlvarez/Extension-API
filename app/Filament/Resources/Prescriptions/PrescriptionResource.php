@@ -25,6 +25,11 @@ class PrescriptionResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedDocumentText;
 
+    public static function getNavigationGroup(): ?string
+    {
+        return __('Cuidado ao Paciente');
+    }
+
     public static function getModelLabel(): string
     {
         return __('Prescrição');

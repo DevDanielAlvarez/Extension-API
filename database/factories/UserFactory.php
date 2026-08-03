@@ -27,14 +27,10 @@ class UserFactory extends Factory
         $firstNames = ['Gabriel', 'Beatriz', 'Thiago', 'Camila', 'Mateus', 'Aline', 'Felipe', 'Larissa', 'Vitor', 'Isabela'];
         $lastNames = ['Silva', 'Santos', 'Oliveira', 'Souza', 'Costa', 'Pereira', 'Lima', 'Alves'];
 
-        $documentType = fake()->randomElement([DocumentTypeEnum::CPF->value, DocumentTypeEnum::CNPJ->value]);
-
         return [
             'name' => fake()->randomElement($firstNames) . ' ' . fake()->randomElement($lastNames),
-            'document_type' => $documentType,
-            'document_number' => $documentType === DocumentTypeEnum::CPF->value
-                ? fake()->unique()->numerify('###########')
-                : fake()->unique()->numerify('##############'),
+            'document_type' => DocumentTypeEnum::CPF->value,
+            'document_number' => fake()->unique()->numerify('###########'),
             'password' => static::$password ??= Hash::make('password'),
             'remember_token' => Str::random(10),
         ];

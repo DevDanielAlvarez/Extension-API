@@ -8,7 +8,6 @@ describe('UserController', function () {
         it('creates a new user with valid data', function () {
             $data = [
                 'name' => 'John Doe',
-                'document_type' => DocumentTypeEnum::CPF->value,
                 'document_number' => '12345678901',
                 'password' => 'Password@123',
                 'password_confirmation' => 'Password@123',
@@ -28,6 +27,8 @@ describe('UserController', function () {
 
             $this->assertDatabaseHas('users', [
                 'name' => 'John Doe',
+                'document_type' => DocumentTypeEnum::CPF->value,
+                'document_number' => '12345678901',
             ]);
         });
 
@@ -39,28 +40,12 @@ describe('UserController', function () {
             $response = $this->postJson('/api/users', $data);
 
             $response->assertStatus(422)
-                ->assertJsonValidationErrors(['document_type', 'document_number', 'password']);
-        });
-
-        it('fails with invalid document type', function () {
-            $data = [
-                'name' => 'John Doe',
-                'document_type' => 'INVALID',
-                'document_number' => '12345678901',
-                'password' => 'Password@123',
-                'password_confirmation' => 'Password@123',
-            ];
-
-            $response = $this->postJson('/api/users', $data);
-
-            $response->assertStatus(422)
-                ->assertJsonValidationErrors(['document_type']);
+                ->assertJsonValidationErrors(['document_number', 'password']);
         });
 
         it('fails with weak password', function () {
             $data = [
                 'name' => 'John Doe',
-                'document_type' => 'CPF',
                 'document_number' => '12345678901',
                 'password' => 'weak',
                 'password_confirmation' => 'weak',
@@ -72,15 +57,14 @@ describe('UserController', function () {
                 ->assertJsonValidationErrors(['password']);
         });
 
-        it('fails with duplicate document number and type', function () {
+        it('fails with duplicate document number', function () {
             User::factory()->create([
-                'document_type' => 'CPF',
+                'document_type' => DocumentTypeEnum::CPF->value,
                 'document_number' => '12345678901',
             ]);
 
             $data = [
                 'name' => 'Jane Doe',
-                'document_type' => 'CPF',
                 'document_number' => '12345678901',
                 'password' => 'Password@123',
                 'password_confirmation' => 'Password@123',
@@ -96,13 +80,12 @@ describe('UserController', function () {
         it('updates a user with valid data', function () {
             $user = User::factory()->create([
                 'name' => 'Old Name',
-                'document_type' => 'CPF',
+                'document_type' => DocumentTypeEnum::CPF->value,
                 'document_number' => '11111111111',
             ]);
 
             $data = [
                 'name' => 'Updated Name',
-                'document_type' => 'CPF',
                 'document_number' => '22222222222',
                 'password' => 'NewPassword@123',
             ];
@@ -142,38 +125,22 @@ describe('UserController', function () {
             $response = $this->actingAs($user)->patchJson("/api/users/{$user->id}", $data);
 
             $response->assertStatus(422)
-                ->assertJsonValidationErrors(['document_type', 'document_number']);
+                ->assertJsonValidationErrors(['document_number']);
         });
 
-        it('fails with invalid document type', function () {
-            $user = User::factory()->create();
-
-            $data = [
-                'name' => 'Updated Name',
-                'document_type' => 'INVALID',
-                'document_number' => '12345678901',
-            ];
-
-            $response = $this->actingAs($user)->patchJson("/api/users/{$user->id}", $data);
-
-            $response->assertStatus(422)
-                ->assertJsonValidationErrors(['document_type']);
-        });
-
-        it('fails with duplicate document number and type', function () {
+        it('fails with duplicate document number', function () {
             $user1 = User::factory()->create([
-                'document_type' => 'CPF',
+                'document_type' => DocumentTypeEnum::CPF->value,
                 'document_number' => '11111111111',
             ]);
 
             $user2 = User::factory()->create([
-                'document_type' => 'CPF',
+                'document_type' => DocumentTypeEnum::CPF->value,
                 'document_number' => '22222222222',
             ]);
 
             $data = [
                 'name' => 'Updated Name',
-                'document_type' => 'CPF',
                 'document_number' => '11111111111',
             ];
 
@@ -185,13 +152,12 @@ describe('UserController', function () {
 
         it('allows user to keep their own document', function () {
             $user = User::factory()->create([
-                'document_type' => 'CPF',
+                'document_type' => DocumentTypeEnum::CPF->value,
                 'document_number' => '12345678901',
             ]);
 
             $data = [
                 'name' => 'Updated Name',
-                'document_type' => 'CPF',
                 'document_number' => '12345678901',
             ];
 
@@ -205,7 +171,6 @@ describe('UserController', function () {
 
             $data = [
                 'name' => 'Updated Name',
-                'document_type' => 'CPF',
                 'document_number' => '12345678901',
                 'password' => 'weak',
             ];
@@ -222,7 +187,6 @@ describe('UserController', function () {
 
             $data = [
                 'name' => 'Updated Name',
-                'document_type' => 'CPF',
                 'document_number' => '99999999999',
                 'password' => null,
             ];

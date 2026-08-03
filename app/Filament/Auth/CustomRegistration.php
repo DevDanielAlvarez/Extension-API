@@ -8,9 +8,7 @@ use App\Services\User\UserService;
 use Filament\Auth\Http\Responses\Contracts\RegistrationResponse;
 use Filament\Auth\Pages\Register;
 use Filament\Facades\Filament;
-use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
-use Filament\Schemas\Components\Utilities\Get;
 
 class CustomRegistration extends Register{
     public function form(\Filament\Schemas\Schema $schema): \Filament\Schemas\Schema{
@@ -18,12 +16,9 @@ class CustomRegistration extends Register{
             ->components([
                 TextInput::make('name')
                     ->translateLabel(),
-                Select::make('document_type')
-                    ->options(DocumentTypeEnum::class)
-                    ->native(false)
-                    ->translateLabel(),
                 TextInput::make('document_number')
-                    ->translateLabel(),
+                    ->label(__('CPF'))
+                    ->required(),
                 TextInput::make('password')
                     ->password()
                     ->revealable()
@@ -39,7 +34,7 @@ class CustomRegistration extends Register{
         // create a dto to create the user using filament form data
         $createUserDTO = new CreateUserDTO(
             name: $this->form->getState()['name'],
-            document_type: $this->form->getState()['document_type'],
+            document_type: DocumentTypeEnum::CPF,
             document_number: $this->form->getState()['document_number'],
             password: $this->form->getState()['password'],
         );

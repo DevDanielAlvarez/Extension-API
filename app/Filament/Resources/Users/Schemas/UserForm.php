@@ -2,8 +2,6 @@
 
 namespace App\Filament\Resources\Users\Schemas;
 
-use App\Enums\DocumentTypeEnum;
-use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Components\Section;
@@ -27,18 +25,12 @@ class UserForm
                             ->required()
                             ->maxLength(255)
                             ->columnSpanFull(),
-                        Select::make('document_type')
-                            ->translateLabel()
-                            ->options(DocumentTypeEnum::class)
-                            ->native(false)
-                            ->searchable()
-                            ->preload()
-                            ->required(),
                         TextInput::make('document_number')
-                            ->translateLabel()
+                            ->label(__('CPF'))
                             ->placeholder('Somente números')
                             ->required()
-                            ->maxLength(255),
+                            ->maxLength(255)
+                            ->columnSpanFull(),
                         TextInput::make('password')
                             ->translateLabel()
                             ->password()

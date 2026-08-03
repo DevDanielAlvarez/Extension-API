@@ -7,10 +7,8 @@ use App\Models\User;
 use Filament\Auth\Http\Responses\LoginResponse;
 use Filament\Auth\Pages\Login;
 use Filament\Facades\Filament;
-use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
-use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
 use Illuminate\Support\Facades\Hash;
 
@@ -20,23 +18,22 @@ class CustomLogin extends Login
     {
         return $schema
             ->schema([
-                Select::make('document_type')
-                    ->native(false)
-                    ->options(DocumentTypeEnum::class)
-                    ->translateLabel()
-                    ->live(),
                 TextInput::make('document_number')
-                    ->visible(fn(Get $get) => $get('document_type'))
-                    ->translateLabel(),
+                    ->label(__('CPF'))
+                    ->required()
+                    ->autofocus(),
                 TextInput::make('password')
                     ->translateLabel()
+                    ->password()
+                    ->revealable()
+                    ->required(),
             ]);
     }
 
     public function authenticate(): \Filament\Auth\Http\Responses\Contracts\LoginResponse|null
     {
         $data = $this->form->getState();
-        $user = User::where('document_type', $data['document_type'])
+        $user = User::where('document_type', DocumentTypeEnum::CPF)
             ->where('document_number', $data['document_number'])
             ->first();
 

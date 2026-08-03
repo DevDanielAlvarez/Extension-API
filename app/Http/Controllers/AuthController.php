@@ -19,8 +19,8 @@ class AuthController extends Controller
     {
         // get validated data from http request
         $validatedData = $request->validated();
-        // find the user based in registration number passed in http request
-        $user = User::where('document_type', $validatedData['document_type'])->where('document_number', $validatedData['document_number'])->first();
+        // find the user based in registration number passed in http request; login only accepts CPF
+        $user = User::where('document_type', DocumentTypeEnum::CPF)->where('document_number', $validatedData['document_number'])->first();
         // the user must exists and the password must correct
         if (!$user || !Hash::check($validatedData['password'], $user->password)) {
             return response()
@@ -49,7 +49,7 @@ class AuthController extends Controller
         // Create a dto using validated data
         $userDto = new CreateUserDTO(
             name: $validatedData['name'],
-            document_type: DocumentTypeEnum::from($validatedData['document_type']),
+            document_type: DocumentTypeEnum::CPF,
             document_number: $validatedData['document_number'],
             password: $validatedData['password']
 

@@ -5,7 +5,6 @@ namespace App\Http\Requests\User;
 use App\Enums\DocumentTypeEnum;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
-use Illuminate\Validation\Rules\Enum;
 use Illuminate\Validation\Rules\Password;
 
 class CreateUserFormRequest extends FormRequest
@@ -27,13 +26,12 @@ class CreateUserFormRequest extends FormRequest
     {
         return [
             'name' => 'required|string|max:255',
-            'document_type' => ['required', new Enum(DocumentTypeEnum::class)],
             'document_number' => [
                 'required',
                 'string',
                 'max:255',
                 Rule::unique('users', 'document_number')
-                    ->where('document_type', $this->input('document_type')),
+                    ->where('document_type', DocumentTypeEnum::CPF->value),
             ],
             'password' => ['required', 'string', 'confirmed', Password::min(8)->symbols()],
         ];

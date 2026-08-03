@@ -53,6 +53,8 @@ class PatientsTable
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
+            ->emptyStateHeading(__('Nenhum paciente cadastrado'))
+            ->emptyStateDescription(__('Cadastre o primeiro paciente clicando no botão acima.'))
             ->filters([
                 TrashedFilter::make(),
             ])

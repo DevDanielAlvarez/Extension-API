@@ -2760,16 +2760,14 @@
                 "type": "object"
             },
             "LoginRequest": {
+                "description": "Login is restricted to users identified by CPF.",
                 "required": [
-                    "document_type",
                     "document_number",
                     "password"
                 ],
                 "properties": {
-                    "document_type": {
-                        "$ref": "#/components/schemas/DocumentTypeEnum"
-                    },
                     "document_number": {
+                        "description": "CPF",
                         "type": "string",
                         "example": "12345678900"
                     },
@@ -2782,9 +2780,9 @@
                 "type": "object"
             },
             "CreateUserRequest": {
+                "description": "Users are always registered with document_type=CPF.",
                 "required": [
                     "name",
-                    "document_type",
                     "document_number",
                     "password",
                     "password_confirmation"
@@ -2795,10 +2793,8 @@
                         "maxLength": 255,
                         "example": "Maria Silva"
                     },
-                    "document_type": {
-                        "$ref": "#/components/schemas/DocumentTypeEnum"
-                    },
                     "document_number": {
+                        "description": "CPF",
                         "type": "string",
                         "maxLength": 255,
                         "example": "12345678900"
@@ -2817,9 +2813,9 @@
                 "type": "object"
             },
             "UpdateUserRequest": {
+                "description": "Users are always identified by document_type=CPF.",
                 "required": [
                     "name",
-                    "document_type",
                     "document_number"
                 ],
                 "properties": {
@@ -2828,10 +2824,8 @@
                         "maxLength": 255,
                         "example": "Maria Oliveira"
                     },
-                    "document_type": {
-                        "$ref": "#/components/schemas/DocumentTypeEnum"
-                    },
                     "document_number": {
+                        "description": "CPF",
                         "type": "string",
                         "maxLength": 255,
                         "example": "12345678900"

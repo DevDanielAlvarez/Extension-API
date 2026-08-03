@@ -59,6 +59,7 @@ class PrescriptionsRelationManager extends RelationManager
                 DatePicker::make('end_date')
                     ->columnSpanFull()
                     ->label(__('End date'))
+                    ->helperText(__('Leave blank for continuous use.'))
                     ->afterOrEqual('start_date'),
                 Textarea::make('instructions')
                     ->label(__('Instructions'))
@@ -141,6 +142,11 @@ class PrescriptionsRelationManager extends RelationManager
                             PrescriptionScheduleService::create($dtoToCreatePrescriptionSchedule);
                         }
                         });
+
+                        Notification::make()
+                            ->title(__('Prescrição criada com sucesso'))
+                            ->success()
+                            ->send();
                     }),
             ])
             ->recordActions([

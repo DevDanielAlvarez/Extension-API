@@ -27,6 +27,11 @@ class RoleResource extends Resource
 
     protected static ?string $recordTitleAttribute = 'name';
 
+    public static function getNavigationGroup(): ?string
+    {
+        return __('Administração do Sistema');
+    }
+
     public static function getModelLabel(): string
     {
         return __('Função');

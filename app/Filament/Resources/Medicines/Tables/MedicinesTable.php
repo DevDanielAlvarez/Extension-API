@@ -68,6 +68,8 @@ class MedicinesTable
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
+            ->emptyStateHeading(__('Nenhum medicamento cadastrado'))
+            ->emptyStateDescription(__('Cadastre o primeiro medicamento clicando no botão acima.'))
             ->filters([
                 TrashedFilter::make(),
             ])
@@ -76,7 +78,9 @@ class MedicinesTable
                     EditAction::make(),
                     DeleteAction::make(),
                     RestoreAction::make(),
-                    ForceDeleteAction::make(),
+                    ForceDeleteAction::make()
+                        ->modalHeading(__('Excluir medicamento permanentemente'))
+                        ->modalDescription(__('Todos os dados desse medicamento serão excluídos permanentemente.')),
                 ]),
             ])
             ->toolbarActions([

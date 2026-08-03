@@ -9,6 +9,9 @@
 Use header:
 `Authorization: Bearer <token>`
 
+### Restrição de documento no login
+Login e cadastro de `User` aceitam somente CPF. O payload de `/api/auth/login` e `/api/auth/register` nao recebe mais `document_type` — o backend sempre busca/cria o usuario com `document_type = CPF`. `Patient` e `Responsible` continuam aceitando CPF ou CNPJ normalmente.
+
 ## Recursos Principais (CRUD)
 Todos abaixo com `auth:sanctum`:
 - `/api/users`

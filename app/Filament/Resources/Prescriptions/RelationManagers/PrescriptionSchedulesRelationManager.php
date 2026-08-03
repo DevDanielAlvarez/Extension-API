@@ -83,7 +83,9 @@ class PrescriptionSchedulesRelationManager extends RelationManager
             ->actions([
                 DeleteAction::make(),
                 RestoreAction::make(),
-                ForceDeleteAction::make(),
+                ForceDeleteAction::make()
+                    ->modalHeading(__('Excluir horário permanentemente'))
+                    ->modalDescription(__('Esse horário de administração será excluído permanentemente, sem possibilidade de restauração.')),
             ])
             ->headerActions([
                 CreateAction::make()

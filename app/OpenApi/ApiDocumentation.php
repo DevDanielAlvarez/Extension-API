@@ -56,19 +56,19 @@ namespace App\OpenApi;
  * @OA\Schema(
  *     schema="LoginRequest",
  *     type="object",
- *     required={"document_type", "document_number", "password"},
- *     @OA\Property(property="document_type", ref="#/components/schemas/DocumentTypeEnum"),
- *     @OA\Property(property="document_number", type="string", example="12345678900"),
+ *     required={"document_number", "password"},
+ *     description="Login is restricted to users identified by CPF.",
+ *     @OA\Property(property="document_number", type="string", example="12345678900", description="CPF"),
  *     @OA\Property(property="password", type="string", format="password", example="Pass@1234")
  * )
  *
  * @OA\Schema(
  *     schema="CreateUserRequest",
  *     type="object",
- *     required={"name", "document_type", "document_number", "password", "password_confirmation"},
+ *     required={"name", "document_number", "password", "password_confirmation"},
+ *     description="Users are always registered with document_type=CPF.",
  *     @OA\Property(property="name", type="string", maxLength=255, example="Maria Silva"),
- *     @OA\Property(property="document_type", ref="#/components/schemas/DocumentTypeEnum"),
- *     @OA\Property(property="document_number", type="string", maxLength=255, example="12345678900"),
+ *     @OA\Property(property="document_number", type="string", maxLength=255, example="12345678900", description="CPF"),
  *     @OA\Property(property="password", type="string", format="password", example="Pass@1234"),
  *     @OA\Property(property="password_confirmation", type="string", format="password", example="Pass@1234")
  * )
@@ -76,10 +76,10 @@ namespace App\OpenApi;
  * @OA\Schema(
  *     schema="UpdateUserRequest",
  *     type="object",
- *     required={"name", "document_type", "document_number"},
+ *     required={"name", "document_number"},
+ *     description="Users are always identified by document_type=CPF.",
  *     @OA\Property(property="name", type="string", maxLength=255, example="Maria Oliveira"),
- *     @OA\Property(property="document_type", ref="#/components/schemas/DocumentTypeEnum"),
- *     @OA\Property(property="document_number", type="string", maxLength=255, example="12345678900"),
+ *     @OA\Property(property="document_number", type="string", maxLength=255, example="12345678900", description="CPF"),
  *     @OA\Property(property="password", type="string", format="password", nullable=true, example="NewPass@1234")
  * )
  *

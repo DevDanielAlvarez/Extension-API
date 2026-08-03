@@ -47,6 +47,8 @@ class PrescriptionsTable
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
+            ->emptyStateHeading(__('Nenhuma prescrição cadastrada'))
+            ->emptyStateDescription(__('Cadastre a primeira prescrição clicando no botão acima.'))
             ->filters([
                 TrashedFilter::make(),
             ])
@@ -56,7 +58,9 @@ class PrescriptionsTable
                     EditAction::make(),
                     DeleteAction::make(),
                     RestoreAction::make(),
-                    ForceDeleteAction::make(),
+                    ForceDeleteAction::make()
+                        ->modalHeading(__('Excluir prescrição permanentemente'))
+                        ->modalDescription(__('Todos os dados dessa prescrição, incluindo horários, serão excluídos permanentemente.')),
                 ]),
             ])
             ->toolbarActions([

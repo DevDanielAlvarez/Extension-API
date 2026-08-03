@@ -58,6 +58,7 @@ class PatientForm
                             ->maxLength(30),
                         KeyValue::make('nursing_report')
                             ->translateLabel()
+                            ->helperText(__('Anotações livres de enfermagem, no formato campo/valor (ex.: alergia: penicilina).'))
                             ->columnSpanFull(),
                     ]),
             ]);

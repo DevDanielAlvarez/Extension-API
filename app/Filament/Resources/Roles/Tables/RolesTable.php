@@ -36,6 +36,8 @@ class RolesTable
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
+            ->emptyStateHeading(__('Nenhuma função cadastrada'))
+            ->emptyStateDescription(__('Cadastre a primeira função clicando no botão acima.'))
             ->filters([
                 TrashedFilter::make(),
             ])
@@ -45,7 +47,9 @@ class RolesTable
                     EditAction::make(),
                     DeleteAction::make(),
                     RestoreAction::make(),
-                    ForceDeleteAction::make(),
+                    ForceDeleteAction::make()
+                        ->modalHeading(__('Excluir função permanentemente'))
+                        ->modalDescription(__('Todos os dados dessa função serão excluídos permanentemente.')),
                 ]),
             ])
             ->toolbarActions([

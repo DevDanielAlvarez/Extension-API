@@ -24,6 +24,11 @@ class MedicineResource extends Resource
 
     protected static ?string $recordTitleAttribute = 'name';
 
+    public static function getNavigationGroup(): ?string
+    {
+        return __('Cuidado ao Paciente');
+    }
+
     public static function getModelLabel(): string
     {
         return __('Medicamento');

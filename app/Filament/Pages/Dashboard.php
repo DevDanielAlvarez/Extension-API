@@ -2,6 +2,7 @@
 
 namespace App\Filament\Pages;
 
+use App\Filament\Support\QuickCreateActions;
 use App\Filament\Widgets\MedicationStatsOverview;
 use App\Filament\Widgets\TodayMedicationByHourChart;
 use App\Filament\Widgets\TodayMedicationsTable;
@@ -23,6 +24,15 @@ class Dashboard extends BaseDashboard
     public function getTitle(): string | Htmlable
     {
         return __('Care Dashboard');
+    }
+
+    protected function getHeaderActions(): array
+    {
+        return [
+            QuickCreateActions::patient(),
+            QuickCreateActions::prescription(),
+            QuickCreateActions::medicine(),
+        ];
     }
 
     public function getWidgets(): array

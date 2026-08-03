@@ -37,3 +37,4 @@ Importante: no sync, permissoes de outras telas sao preservadas.
 - APIs sem token em `api/*` retornam `401` JSON.
 - Fluxo web sem autenticacao redireciona para login Filament.
 - Comportamento definido em `bootstrap/app.php`.
+- Login e cadastro de `User` sao restritos a CPF (`document_type` fixado no backend, nao e mais input do cliente).
