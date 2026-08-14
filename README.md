@@ -4,128 +4,85 @@ API Laravel com autenticação Sanctum, painel Filament e documentação Swagger
 
 ## Requisitos
 
-### Com Docker
-- Docker
-- Docker Compose (plugin docker compose)
+Docker e o plugin `docker compose`. Nada além disso — PHP, Composer, Node e banco rodam todos dentro do container.
 
-### Sem Docker
-- PHP 8.5+
-- Composer 2+
-- Node.js 20+ e npm
-- MariaDB 11+ (ou MySQL compatível)
-
-## 1) Rodar com Docker (Laravel Sail)
-
-### Linux
+## Setup
 
 ```bash
 cp .env.example .env
-composer install
-./vendor/bin/sail up -d
-./vendor/bin/sail artisan key:generate
-./vendor/bin/sail artisan migrate:fresh --seed
-./vendor/bin/sail npm install
-./vendor/bin/sail npm run build
+docker compose up -d
 ```
 
-### Windows (PowerShell)
+É só isso. Na primeira subida o container cuida sozinho de:
 
-```powershell
-Copy-Item .env.example .env
-composer install
-./vendor/bin/sail up -d
-./vendor/bin/sail artisan key:generate
-./vendor/bin/sail artisan migrate:fresh --seed
-./vendor/bin/sail npm install
-./vendor/bin/sail npm run build
-```
+1. gerar a `APP_KEY`
+2. criar o banco SQLite em `database/database.sqlite`
+3. rodar as migrations
+4. rodar os seeders (apenas quando o banco é novo)
+5. gerar a documentação Swagger
 
-### Enderecos (Docker)
-- API: http://localhost
-- Swagger: http://localhost/api/documentation
-- Filament: http://localhost/admin
+Acompanhe o progresso com `docker compose logs -f app`. A aplicação está pronta quando aparecer `🚀 Aplicação pronta`.
 
-Observacao: a porta pode variar conforme APP_PORT no .env.
+### Endereços
 
-## 2) Rodar sem Docker
+- API: http://localhost:8080
+- Swagger: http://localhost:8080/api/documentation
+- Filament: http://localhost:8080/admin
 
-### Linux
+Para usar outra porta, altere `APP_PORT` (e `APP_URL`) no `.env` e rode `docker compose up -d` novamente.
+
+## Banco de dados
+
+O projeto usa **SQLite**, num arquivo em `database/database.sqlite`. Ele fica no seu diretório de trabalho, então persiste entre `docker compose down` e `up`.
+
+Para começar do zero, apague o arquivo e suba de novo — as migrations e os seeders rodam automaticamente:
 
 ```bash
-cp .env.example .env
-composer install
-npm install
-
-php artisan key:generate
-
-# configure DB_* no .env para seu MariaDB/MySQL local
-php artisan migrate:fresh --seed
-
-php artisan serve
-npm run dev
+docker compose down
+rm -f database/database.sqlite
+docker compose up -d
 ```
 
-### Windows (PowerShell)
-
-```powershell
-Copy-Item .env.example .env
-composer install
-npm install
-
-php artisan key:generate
-
-# configure DB_* no .env para seu MariaDB/MySQL local
-php artisan migrate:fresh --seed
-
-php artisan serve
-npm run dev
-```
-
-### Enderecos (sem Docker)
-- API: http://127.0.0.1:8000
-- Swagger: http://127.0.0.1:8000/api/documentation
-- Filament: http://127.0.0.1:8000/admin
-
-## Comandos uteis
-
-### Docker
+## Comandos úteis
 
 ```bash
-./vendor/bin/sail artisan test
-./vendor/bin/sail artisan l5-swagger:generate
-./vendor/bin/sail down
+# logs
+docker compose logs -f app
+
+# Artisan
+docker compose exec app php artisan migrate
+docker compose exec app php artisan db:seed
+docker compose exec app php artisan test
+docker compose exec app php artisan l5-swagger:generate
+
+# shell no container
+docker compose exec app bash
+
+# parar
+docker compose down
 ```
 
-### Sem Docker
+## Solução de problemas
+
+**A porta já está em uso.** Se algo no host já ocupa a `8080`, mude `APP_PORT` e `APP_URL` no `.env` e suba novamente.
+
+**Alterei o `composer.json`/`composer.lock`.** O container detecta a mudança pelo hash do lock e reinstala as dependências sozinho no próximo `docker compose up -d`.
+
+**Alterei arquivos do frontend.** Os assets são compilados durante o build da imagem, então reconstrua:
 
 ```bash
-php artisan test
-php artisan l5-swagger:generate
+docker compose up -d --build
 ```
 
-## Solucao de problemas
-
-- Erro de permissao em storage/bootstrap cache:
+**Quero recomeçar do absoluto zero** (imagem, volumes e banco):
 
 ```bash
-chmod -R 775 storage bootstrap/cache
+docker compose down -v
+rm -f database/database.sqlite
+docker compose up -d --build
 ```
 
-- Se alterar migrations/modelos de soft delete, rode novamente:
-
-```bash
-php artisan migrate:fresh --seed
-```
-
-- Logs da aplicacao:
-
-```bash
-tail -f storage/logs/laravel.log
-```
-
-## Documentacao de Fluxo e Arquitetura
-
-Para acelerar onboarding e entendimento de regras de negocio, consulte:
+## Documentação de fluxo e arquitetura
 
 - `docs/01-visao-geral.md`
 - `docs/02-arquitetura.md`
@@ -136,8 +93,9 @@ Para acelerar onboarding e entendimento de regras de negocio, consulte:
 - `docs/07-playbook-ia-documentacao.md`
 - `docs/08-checklist-pr-documentacao.md`
 
-Sugestao de leitura rapida:
-1. Visao geral
+Sugestão de leitura rápida:
+
+1. Visão geral
 2. Arquitetura
-3. Fluxos de negocio
-4. API e autorizacao
+3. Fluxos de negócio
+4. API e autorização
