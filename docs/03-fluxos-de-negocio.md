@@ -127,3 +127,41 @@ Permitir configurar permissoes por contexto de tela sem afetar outras telas.
 
 ### Resultado
 - Atualizacao atomica de permissoes da tela alvo, sem apagar contexto das demais telas.
+
+---
+
+## Fluxo 5: Registrar Movimentacao de Estoque
+Endpoint: `POST /api/stock-items/{stockItem}/movements`
+
+### Objetivo
+Registrar entrada, saida, ajuste de inventario ou devolucao de um item de estoque (enxoval do residente ou insumo medico), atualizando o saldo do item de forma atomica.
+
+### Entrada
+- FormRequest: `CreateStockMovementFormRequest`.
+- Campos: `type` (`IN`/`OUT`/`ADJUSTMENT`/`RETURNED`), `quantity`, `patient_id?`, `batch?`, `expiry_date?`, `notes?`, `movement_date?`.
+- `stock_item_id` vem da rota, `user_id` vem do usuario autenticado (nao do payload).
+
+### Regras
+- `IN`/`OUT`/`RETURNED` aplicam um delta (+/-) sobre `current_quantity`; `ADJUSTMENT` define o saldo diretamente como `quantity` (correcao de contagem fisica).
+- Saldo resultante nunca pode ficar negativo (`422` em `quantity` caso contrario).
+- `patient_id` obrigatorio em `OUT`/`RETURNED` quando o item e `category = RESIDENT_SUPPLY`; opcional para `MEDICAL_SUPPLY`.
+- `batch`/`expiry_date` obrigatorios em `IN` quando `stock_items.requires_batch_control = true`.
+
+### Sequencia Interna
+1. Controller valida via FormRequest e monta `CreateStockMovementDTO`.
+2. Em transacao: `StockMovementService::create` busca o item, valida as regras de paciente/lote, aplica o efeito do `type` sobre o saldo via `StockItemService` e cria o registro em `stock_movements`.
+3. Retorna `StockMovementResource` com status 201.
+
+### Saida
+- `201 Created` com a movimentacao criada.
+
+### Erros Esperados
+- `404` se o item nao existir.
+- `422` para validacao, saldo insuficiente, paciente obrigatorio ausente ou lote/validade ausentes.
+- `401` se sem token.
+
+### Fluxos relacionados
+- `GET /api/patients/{patient}/stock-items` — itens de enxoval atualmente emprestados ao paciente, calculado a partir do historico de movimentacoes (`SUM(OUT) - SUM(RETURNED)`), sem tabela de atribuicao dedicada.
+- `GET /api/stock-items/low-stock` — itens com `current_quantity <= minimum_quantity`.
+
+Detalhamento completo (schema, enums, decisoes de escopo) em `docs/09-controle-de-estoque.md`.

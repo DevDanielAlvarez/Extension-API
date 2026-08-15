@@ -23,6 +23,8 @@ class DatabaseSeeder extends Seeder
             MedicineSeeder::class,
             PrescriptionSeeder::class,
             PrescriptionSchedulesSeeder::class,
+            StockItemSeeder::class,
+            StockDonationSeeder::class,
             UserSeeder::class,
         ]);
     }

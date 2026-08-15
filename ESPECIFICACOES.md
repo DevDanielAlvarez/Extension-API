@@ -30,6 +30,9 @@ API em Laravel para gestão de **pacientes**, **responsáveis**, **prescrições
 - **Prescription** — prescrição de um medicamento para um paciente, com período de vigência.
 - **PrescriptionSchedule** — agenda da prescrição (dia da semana, horário, quantidade).
 - **Medicine** — medicamento usado na prescrição.
+- **StockItem** — item de estoque (enxoval do residente ou insumo médico), com saldo atual e estoque mínimo. Operado pelo painel Filament (`StockItemResource`, grupo "Estoque") além da API.
+- **StockMovement** — log de entrada/saída/ajuste/devolução de um `StockItem`, opcionalmente vinculado a um paciente.
+- **StockDonation** — registro público (sem autenticação) de alguém trazendo um item para um paciente específico (identificado por CPF); fica `PENDING` até um admin confirmar ou cancelar pelo painel Filament.
 
 ### Convenções de Fluxo
 - **Entrada**: Controller + FormRequest (validação inline em poucos casos, ex. `storePrescription`).
@@ -81,6 +84,8 @@ PATIENT }o--o{ RESPONSIBLE : linked
 PATIENT ||--o{ PRESCRIPTION : has
 PRESCRIPTION ||--o{ PRESCRIPTION_SCHEDULE : schedules
 PRESCRIPTION }o--|| MEDICINE : uses
+STOCK_ITEM ||--o{ STOCK_MOVEMENT : has
+STOCK_MOVEMENT }o--o| PATIENT : "linked to (optional)"
 ```
 
 ### Decisões Arquiteturais Observadas
@@ -188,6 +193,54 @@ Registra a aplicação de uma dose numa data específica (o `prescription_schedu
 | timestamps | | |
 | único | (prescription_schedule_id, scheduled_date) | evita duplicar a mesma ocorrência |
 
+### `stock_items`
+| Campo | Tipo | Observações |
+|---|---|---|
+| id | ulid, PK | |
+| name | string | |
+| category | string | enum `StockItemCategoryEnum` |
+| unit | string | enum `StockItemUnitEnum` |
+| current_quantity | integer | saldo atual; só muda via `stock_movements`, não editável em `PUT`/`PATCH` |
+| minimum_quantity | integer, nullable | usado para sinalizar estoque baixo |
+| requires_batch_control | boolean | default `false` |
+| additional_information | text, nullable | |
+| timestamps / soft delete | | |
+
+### `stock_movements`
+Log operacional de entrada/saída/ajuste/devolução. Sem soft delete, mesmo padrão de `medication_administrations`.
+
+| Campo | Tipo | Observações |
+|---|---|---|
+| id | ulid, PK | |
+| stock_item_id | FK → stock_items, cascade on delete | |
+| type | string | enum `StockMovementTypeEnum` |
+| quantity | integer | >= 0; efeito no saldo depende de `type` |
+| patient_id | FK → patients, nullable, null on delete | obrigatório em `OUT`/`RETURNED` quando o item é `RESIDENT_SUPPLY` |
+| user_id | FK → users, nullable, null on delete | quem registrou (do usuário autenticado) |
+| batch | string, nullable | obrigatório em `IN` quando `requires_batch_control = true` |
+| expiry_date | date, nullable | idem `batch` |
+| notes | text, nullable | |
+| movement_date | datetime | |
+| stock_donation_id | FK → stock_donations, nullable, null on delete | preenchido quando a movimentação veio de uma doação confirmada |
+| timestamps | | sem soft delete |
+
+### `stock_donations`
+Registro público (sem autenticação) de item trazido para um paciente específico.
+
+| Campo | Tipo | Observações |
+|---|---|---|
+| id | ulid, PK | |
+| stock_item_id | FK → stock_items, cascade on delete | |
+| patient_id | FK → patients, cascade on delete | resolvido a partir do CPF informado no formulário público |
+| quantity | integer | |
+| donor_name | string | |
+| donor_phone | string, nullable | |
+| notes | text, nullable | |
+| status | string | enum `StockDonationStatusEnum` (`PENDING`, `CONFIRMED`, `CANCELLED`) |
+| reviewed_by_user_id | FK → users, nullable, null on delete | |
+| reviewed_at | timestamp, nullable | |
+| timestamps / soft delete | | |
+
 ### `roles`
 | Campo | Tipo |
 |---|---|
@@ -219,7 +272,11 @@ Tabela padrão do Sanctum (morphs ULID) para tokens de API.
 | `ContentUnitEnum` | `MG`, `MCG`, `G`, `ML`, `IU`, `UNIT` (implementa `HasLabel` do Filament) |
 | `RouteOfAdministrationEnum` | `ORAL`, `SUBLINGUAL`, `TOPICAL`, `INHALATION`, `INTRAVENOUS`, `INTRAMUSCULAR`, `SUBCUTANEOUS` |
 | `DayOfWeekEnum` | `Sunday=0` … `Saturday=6` |
-| `PermissionScreenEnum` | `medicines_screen`, `users_screen`, `patients_screen`, `roles_screen`, `responsibles_screen`, `prescriptions_screen`, `give_permissions_to_roles_screen` |
+| `PermissionScreenEnum` | `medicines_screen`, `users_screen`, `patients_screen`, `roles_screen`, `responsibles_screen`, `prescriptions_screen`, `stock_screen`, `give_permissions_to_roles_screen` |
+| `StockItemCategoryEnum` | `RESIDENT_SUPPLY`, `MEDICAL_SUPPLY` |
+| `StockItemUnitEnum` | `UNIT`, `PAIR`, `BOX`, `PACK`, `ML`, `G` |
+| `StockMovementTypeEnum` | `IN`, `OUT`, `ADJUSTMENT`, `RETURNED` |
+| `StockDonationStatusEnum` | `PENDING`, `CONFIRMED`, `CANCELLED` |
 
 ---
 
@@ -243,7 +300,15 @@ Todos protegidos por `auth:sanctum`. Cada recurso abaixo segue o padrão `apiRes
 - `POST /{recurso}/{id}/restore`
 - `DELETE /{recurso}/{id}/force-delete`
 
-Recursos: `users`, `patients`, `responsibles`, `medicines`, `roles`, `prescriptions`, `prescription-schedules`.
+Recursos: `users`, `patients`, `responsibles`, `medicines`, `roles`, `prescriptions`, `prescription-schedules`, `stock-items`.
+
+### Movimentações e Consultas de Estoque
+| Método | Rota | Descrição |
+|---|---|---|
+| GET | `/api/stock-items/low-stock` | Itens com `current_quantity <= minimum_quantity` |
+| GET | `/api/stock-items/{stockItem}/movements` | Histórico de movimentações do item |
+| POST | `/api/stock-items/{stockItem}/movements` | Registra movimentação (`IN`/`OUT`/`ADJUSTMENT`/`RETURNED`) |
+| GET | `/api/patients/{patient}/stock-items` | Itens de enxoval atualmente em uso pelo paciente (calculado a partir de `stock_movements`) |
 
 ### Permissions (somente leitura/gestão pontual, sem `store`/`update` genéricos)
 | Método | Rota | Descrição |
@@ -301,6 +366,14 @@ Listagens usam paginação padrão de tamanho 10 (`paginate(10)`).
 | 401 | Não autenticado em rota protegida |
 | 404 | Registro não encontrado (`findOrFail`) |
 | 422 | Falha de validação |
+
+### Rotas Web Públicas (fora de `/api` e de `auth:sanctum`)
+| Método | Rota | Descrição |
+|---|---|---|
+| GET | `/doacoes` | Formulário público para registrar um item trazido para um paciente (por CPF) |
+| POST | `/doacoes` | Registra a doação como `PENDING`; rejeita CPF que não corresponda a paciente cadastrado |
+
+Definidas em `routes/web.php`, servidas por `StockDonationPublicController` — não usam Sanctum nem retornam JSON, é uma view Blade tradicional. A validação/confirmação (`Confirmar`/`Cancelar`) é feita pelo `StockDonationResource` no painel Filament (autenticado), não por essas rotas.
 
 ### Documentação OpenAPI
 - Anotações centrais: `app/OpenApi/ApiDocumentation.php`
@@ -380,6 +453,18 @@ PC-->>C: 201 + PrescriptionResource
   4. Faz `sync` da união (outras telas + tela atual selecionada).
 - **Resultado:** atualização atômica das permissões da tela alvo, sem apagar o contexto das demais telas.
 
+### 6.5 Registrar Movimentação de Estoque
+**Endpoint:** `POST /api/stock-items/{stockItem}/movements`
+
+- **FormRequest:** `CreateStockMovementFormRequest`.
+- **Campos:** `type` (`IN`/`OUT`/`ADJUSTMENT`/`RETURNED`), `quantity`, `patient_id?`, `batch?`, `expiry_date?`, `notes?`, `movement_date?`. `stock_item_id` vem da rota; `user_id` vem do usuário autenticado.
+- **Regras:** `IN`/`OUT`/`RETURNED` aplicam delta sobre `current_quantity`; `ADJUSTMENT` define o saldo diretamente (correção de contagem física). Saldo nunca pode ficar negativo. `patient_id` obrigatório em `OUT`/`RETURNED` para itens `RESIDENT_SUPPLY`. `batch`/`expiry_date` obrigatórios em `IN` quando `requires_batch_control = true`.
+- **Sequência:** Controller valida via FormRequest → monta `CreateStockMovementDTO` → em transação, `StockMovementService::create` busca o item, valida as regras e aplica o efeito sobre o saldo via `StockItemService` → cria o registro em `stock_movements` → retorna `StockMovementResource` com `201`.
+- **Erros:** `404` item inexistente, `422` validação/saldo insuficiente/paciente ou lote ausentes, `401` sem token.
+- **Consultas relacionadas:** `GET /api/patients/{patient}/stock-items` (itens de enxoval emprestados ao paciente, calculado via `SUM(OUT) - SUM(RETURNED)`) e `GET /api/stock-items/low-stock`.
+
+Detalhamento completo em `docs/09-controle-de-estoque.md`.
+
 ---
 
 ## 7. Autorização
@@ -401,6 +486,9 @@ Implementação principal em `app/Policies/Traits/CheckPermissionTrait.php`:
 - `PrescriptionPolicy` → `PermissionScreenEnum::PRESCRIPTIONS_SCREEN`
 - `RolePolicy` → `PermissionScreenEnum::ROLES_SCREEN`
 - `MedicinePolicy`, `ResponsiblePolicy`, `UserPolicy` seguem o mesmo padrão para suas telas.
+- `StockItemPolicy`, `StockMovementPolicy` e `StockDonationPolicy` → `PermissionScreenEnum::STOCK_SCREEN` (uma única tela cobre cadastro de itens, movimentações e validação de doações).
+
+**Nota:** como as demais Policies do projeto, nenhum controller da API chama `$this->authorize()` ou usa middleware `can:` — a única barreira efetiva nas rotas `api/*` é `auth:sanctum`. As Policies existem para autorização automática caso um recurso Filament seja adicionado depois.
 
 Ações avaliadas: `listar`, `exibir`, `criar`, `atualizar`, `deletar`, `restaurar`, `forcar deletar`, `reordenar` (e variantes em massa quando aplicável).
 
@@ -422,6 +510,9 @@ Ações avaliadas: `listar`, `exibir`, `criar`, `atualizar`, `deletar`, `restaur
 - **Prescrição**: orientação de uso de medicamento para um paciente em um período.
 - **Agenda da Prescrição**: detalhe recorrente de administração (dia da semana, horário e quantidade).
 - **Medicamento**: item farmacêutico usado na prescrição.
+- **Item de Estoque**: item de enxoval do residente (ex.: travesseiro, edredom) ou insumo médico (ex.: agulha, seringa) com saldo controlado.
+- **Movimentação de Estoque**: registro de entrada, saída, ajuste de inventário ou devolução de um item de estoque.
+- **Doação de Item**: registro público de alguém trazendo um item para um paciente específico, pendente de confirmação por um admin.
 
 ### Termos Técnicos
 - **DTO**: objeto de transporte de dados entre camadas.
@@ -486,6 +577,8 @@ Suíte Pest (`tests/Feature`, `tests/Unit`) cobrindo:
 - `PrescriptionControllerTest`, `PrescriptionSchedulesControllerTest` — regras de prescrição e agenda.
 - `PatientRelationshipTest`, `PatientResponsibleLinkRoutesTest` — vínculo paciente↔responsável.
 - `ModelServiceDeleteTest` — regras de cascata de soft delete/restore/force delete.
+- `StockItemControllerTest` — CRUD, saldo não editável via update, estoque baixo, soft delete/restore/force-delete.
+- `StockMovementControllerTest` — efeito de cada `type` no saldo, saldo insuficiente, exigência de lote/validade, exigência de paciente para itens de residente, itens em uso por paciente.
 
 ---
 

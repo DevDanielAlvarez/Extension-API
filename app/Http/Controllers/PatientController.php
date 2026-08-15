@@ -7,12 +7,16 @@ use App\DTO\Patient\UpdatePatientDTO;
 use App\DTO\Prescription\CreatePrescriptionDTO;
 use App\DTO\PrescriptionSchedule\CreatePrescriptionScheduleDTO;
 use App\Enums\DocumentTypeEnum;
+use App\Enums\StockMovementTypeEnum;
 use App\Http\Requests\Patient\CreatePatientFormRequest;
 use App\Http\Requests\Patient\UpdatePatientFormRequest;
 use App\Http\Resources\PatientResource;
 use App\Http\Resources\PrescriptionResource;
 use App\Http\Resources\ResponsibleResource;
+use App\Http\Resources\StockItemInUseResource;
 use App\Models\Patient;
+use App\Models\StockItem;
+use App\Models\StockMovement;
 use App\Services\Patient\PatientService;
 use App\Services\Prescription\PrescriptionService;
 use App\Services\PrescriptionSchedule\PrescriptionScheduleService;
@@ -168,6 +172,40 @@ class PatientController extends Controller
         });
 
         return $result->response()->setStatusCode(201);
+    }
+
+    /**
+     * Stock items currently assigned to the patient (e.g. borrowed pillow/comforter).
+     * Calculated from the movement log (OUT - RETURNED), no dedicated assignment table.
+     */
+    public function stockItems(string $patient)
+    {
+        $patientService = PatientService::find($patient);
+        $patientId = $patientService->getRecord()->id;
+
+        $movements = StockMovement::query()
+            ->whereIn('type', [StockMovementTypeEnum::OUT, StockMovementTypeEnum::RETURNED])
+            ->where('patient_id', $patientId)
+            ->get(['stock_item_id', 'type', 'quantity']);
+
+        $balances = $movements
+            ->groupBy('stock_item_id')
+            ->map(fn ($group) => $group->sum(
+                fn (StockMovement $movement) => $movement->type === StockMovementTypeEnum::OUT
+                    ? $movement->quantity
+                    : -$movement->quantity
+            ))
+            ->filter(fn (int $quantity) => $quantity > 0);
+
+        $stockItems = StockItem::whereIn('id', $balances->keys())
+            ->get()
+            ->map(function (StockItem $item) use ($balances) {
+                $item->quantity_in_use = $balances[$item->id];
+
+                return $item;
+            });
+
+        return StockItemInUseResource::collection($stockItems);
     }
 
     public function destroy(string $patient)

@@ -7,6 +7,7 @@ use App\Filament\Resources\Patients\Pages\EditPatient;
 use App\Filament\Resources\Patients\Pages\ListPatients;
 use App\Filament\Resources\Patients\RelationManagers\PrescriptionsRelationManager;
 use App\Filament\Resources\Patients\RelationManagers\ResponsiblesRelationManager;
+use App\Filament\Resources\Patients\RelationManagers\StockMovementsRelationManager;
 use App\Filament\Resources\Patients\Schemas\PatientForm;
 use App\Filament\Resources\Patients\Tables\PatientsTable;
 use App\Models\Patient;
@@ -69,6 +70,7 @@ class PatientResource extends Resource
         return [
             ResponsiblesRelationManager::class,
             PrescriptionsRelationManager::class,
+            StockMovementsRelationManager::class,
         ];
     }
 

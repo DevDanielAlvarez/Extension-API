@@ -8,6 +8,7 @@ use App\Http\Controllers\PrescriptionController;
 use App\Http\Controllers\PrescriptionSchedulesController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\ResponsibleController;
+use App\Http\Controllers\StockItemController;
 use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -61,6 +62,12 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::delete('prescription-schedules/{prescriptionSchedule}/force-delete', [PrescriptionSchedulesController::class, 'forceDelete']);
     Route::apiResource('prescription-schedules', PrescriptionSchedulesController::class);
 
+    Route::get('stock-items/trashed', [StockItemController::class, 'trashed']);
+    Route::get('stock-items/low-stock', [StockItemController::class, 'lowStock']);
+    Route::post('stock-items/{stockItem}/restore', [StockItemController::class, 'restore']);
+    Route::delete('stock-items/{stockItem}/force-delete', [StockItemController::class, 'forceDelete']);
+    Route::apiResource('stock-items', StockItemController::class);
+
     Route::get('permissions', [PermissionController::class, 'index']);
     Route::get('permissions/trashed', [PermissionController::class, 'trashed']);
     Route::get('permissions/screens', [PermissionController::class, 'screens']);
@@ -81,6 +88,10 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('patients/{patient}/prescriptions', [PatientController::class, 'prescriptions']);
     Route::post('patients/{patient}/prescriptions', [PatientController::class, 'storePrescription']);
     Route::get('prescriptions/{prescription}/schedules', [PrescriptionController::class, 'schedules']);
+
+    Route::get('patients/{patient}/stock-items', [PatientController::class, 'stockItems']);
+    Route::get('stock-items/{stockItem}/movements', [StockItemController::class, 'movements']);
+    Route::post('stock-items/{stockItem}/movements', [StockItemController::class, 'storeMovement']);
 
     Route::get('users/{user}/roles', [UserController::class, 'roles']);
     Route::post('users/{user}/roles/{role}', [UserController::class, 'attachRole']);

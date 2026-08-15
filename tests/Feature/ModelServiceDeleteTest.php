@@ -7,6 +7,7 @@ use App\Models\Prescription;
 use App\Models\PrescriptionSchedule;
 use App\Models\Responsible;
 use App\Models\Role;
+use App\Models\StockItem;
 use App\Models\User;
 use App\Services\Medicine\MedicineService;
 use App\Services\Patient\PatientService;
@@ -15,6 +16,7 @@ use App\Services\Prescription\PrescriptionService;
 use App\Services\PrescriptionSchedule\PrescriptionScheduleService;
 use App\Services\Responsible\ResponsibleService;
 use App\Services\Role\RoleService;
+use App\Services\StockItem\StockItemService;
 use App\Services\User\UserService;
 
 describe('Model service delete', function () {
@@ -80,5 +82,13 @@ describe('Model service delete', function () {
         PrescriptionScheduleService::find($schedule->id)->delete();
 
         $this->assertSoftDeleted('prescription_schedules', ['id' => $schedule->id]);
+    });
+
+    it('soft deletes stock item through StockItemService', function () {
+        $stockItem = StockItem::factory()->create();
+
+        StockItemService::find($stockItem->id)->delete();
+
+        $this->assertSoftDeleted('stock_items', ['id' => $stockItem->id]);
     });
 });

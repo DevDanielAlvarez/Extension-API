@@ -42,6 +42,16 @@ class Patient extends Model
         return $this->hasMany(Prescription::class);
     }
 
+    public function stockMovements(): HasMany
+    {
+        return $this->hasMany(StockMovement::class);
+    }
+
+    public function stockDonations(): HasMany
+    {
+        return $this->hasMany(StockDonation::class);
+    }
+
     protected static function booted(): void
     {
         static::deleting(function (self $patient): void {

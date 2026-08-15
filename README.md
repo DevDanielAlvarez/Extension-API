@@ -135,6 +135,7 @@ Para acelerar onboarding e entendimento de regras de negocio, consulte:
 - `docs/06-glossario.md`
 - `docs/07-playbook-ia-documentacao.md`
 - `docs/08-checklist-pr-documentacao.md`
+- `docs/09-controle-de-estoque.md`
 
 Sugestao de leitura rapida:
 1. Visao geral

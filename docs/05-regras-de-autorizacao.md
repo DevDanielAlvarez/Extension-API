@@ -19,6 +19,8 @@ Exemplos:
 - `PatientPolicy` usa `PermissionScreenEnum::PATIENTS_SCREEN`.
 - `PrescriptionPolicy` usa `PermissionScreenEnum::PRESCRIPTIONS_SCREEN`.
 - `RolePolicy` usa `PermissionScreenEnum::ROLES_SCREEN`.
+- `StockItemPolicy`, `StockMovementPolicy` e `StockDonationPolicy` usam `PermissionScreenEnum::STOCK_SCREEN` (uma unica tela cobre cadastro de itens, movimentacoes e validacao de doacoes).
+- As rotas `GET/POST /doacoes` (formulario publico de doacao) ficam fora de `auth:sanctum` propositalmente — qualquer visitante pode registrar uma doacao pendente; a confirmacao exige login no painel Filament.
 
 Acoes avaliadas normalmente:
 - `listar`, `exibir`, `criar`, `atualizar`, `deletar`

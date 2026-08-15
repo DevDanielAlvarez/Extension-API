@@ -10,6 +10,7 @@ enum PermissionScreenEnum: string
     case ROLES_SCREEN = 'roles_screen';
     case RESPONSIBLES_SCREEN = 'responsibles_screen';
     case PRESCRIPTIONS_SCREEN = 'prescriptions_screen';
+    case STOCK_SCREEN = 'stock_screen';
 
     case GIVE_PERMISSIONS_TO_ROLES_SCREEN = 'give_permissions_to_roles_screen';
     
@@ -22,6 +23,7 @@ enum PermissionScreenEnum: string
             self::ROLES_SCREEN => __('Roles Screens'),
             self::RESPONSIBLES_SCREEN => __('Responsibles Screens'),
             self::PRESCRIPTIONS_SCREEN => __('Prescriptions Screens'),
+            self::STOCK_SCREEN => __('Stock Screens'),
             self::GIVE_PERMISSIONS_TO_ROLES_SCREEN => __('Give Permissions To Roles Screen'),
         };
     }

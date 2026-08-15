@@ -6,6 +6,9 @@
 - Prescricao: orientacao de uso de medicamento para um paciente em um periodo.
 - Agenda da Prescricao: detalhe recorrente de administracao (dia da semana, horario e quantidade).
 - Medicamento: item farmaceutico usado na prescricao.
+- Item de Estoque: item de enxoval do residente (ex.: travesseiro, edredom) ou insumo medico (ex.: agulha, seringa) com saldo controlado.
+- Movimentacao de Estoque: registro de entrada, saida, ajuste de inventario ou devolucao de um item de estoque; ver `docs/09-controle-de-estoque.md`.
+- Doacao de Item: registro publico (sem login) de alguem trazendo um item para um paciente especifico, pendente de confirmacao por um admin no painel.
 
 ## Termos Tecnicos
 - DTO: objeto de transporte de dados entre camadas.
