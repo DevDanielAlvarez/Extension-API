@@ -165,3 +165,32 @@ Registrar entrada, saida, ajuste de inventario ou devolucao de um item de estoqu
 - `GET /api/stock-items/low-stock` — itens com `current_quantity <= minimum_quantity`.
 
 Detalhamento completo (schema, enums, decisoes de escopo) em `docs/09-controle-de-estoque.md`.
+
+---
+
+## Fluxo 6: Estoque de Medicamento do Paciente
+
+### Objetivo
+Diferente do estoque de insumos/enxoval (`docs/09-controle-de-estoque.md`), a clinica **nao pode manter estoque proprio de medicamentos** por exigencia legal — quem e dono dos remedios e sempre o paciente. `PatientMedicine` guarda esse saldo real (persistido) por par (paciente, medicamento), com log de movimentacoes em `PatientMedicineMovement` (mesmos tipos `IN`/`OUT`/`ADJUSTMENT`/`RETURNED` do estoque de insumos).
+
+### Entrada
+- `POST /api/patient-medicines` — cria o saldo inicial de um medicamento para um paciente (`patient_id`, `medicine_id`, `current_quantity?`, `minimum_quantity?`).
+- `POST /api/patient-medicines/{patientMedicine}/movements` — registra uma movimentacao (`type`, `quantity`, `notes?`, `movement_date?`).
+
+### Regras
+- Um saldo unico por par (`patient_id`, `medicine_id`).
+- `IN`/`RETURNED` somam ao saldo; `OUT` subtrai; `ADJUSTMENT` define o saldo diretamente — mesma logica de `StockItemService`/`StockMovementService`, aplicada por `PatientMedicineService`/`PatientMedicineMovementService`.
+- Saldo nunca pode ficar negativo (`422` em `quantity` caso contrario).
+- `current_quantity` so muda atraves de movimentacoes, nunca via `PATCH /api/patient-medicines/{id}` (que so altera `minimum_quantity`).
+
+### Baixa automatica na aplicacao de dose
+Ao marcar uma dose como aplicada (`TodayMedicationsTable` no painel Filament), `MedicationAdministrationService::markApplied` roda em transacao:
+1. Garante (cria se preciso, com saldo zerado) o `PatientMedicine` do par (paciente, medicamento) da prescricao.
+2. Cria/atualiza o `MedicationAdministration` do dia.
+3. Registra uma movimentacao `OUT` de `PatientMedicineMovement` com a `quantity` da `PrescriptionSchedule`, referenciando a administracao.
+
+Se o paciente nao tiver saldo suficiente daquele medicamento, a aplicacao da dose e **bloqueada** (erro de validacao) — e preciso registrar uma entrada (`IN`) antes. Desfazer a aplicacao (`undoApplied`) estorna a quantidade com uma movimentacao `RETURNED` e remove o `MedicationAdministration`.
+
+### Erros Esperados
+- `422` para validacao, saldo insuficiente ou saldo duplicado (mesmo paciente + medicamento).
+- `401` se sem token.

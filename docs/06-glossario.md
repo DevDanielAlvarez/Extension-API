@@ -9,6 +9,8 @@
 - Item de Estoque: item de enxoval do residente (ex.: travesseiro, edredom) ou insumo medico (ex.: agulha, seringa) com saldo controlado.
 - Movimentacao de Estoque: registro de entrada, saida, ajuste de inventario ou devolucao de um item de estoque; ver `docs/09-controle-de-estoque.md`.
 - Doacao de Item: registro publico (sem login) de alguem trazendo um item para um paciente especifico, pendente de confirmacao por um admin no painel.
+- Medicamento do Paciente (`PatientMedicine`): saldo de um medicamento pertencente a um paciente especifico (nunca a clinica — a instituicao nao pode manter estoque proprio de medicamentos por exigencia legal). Um saldo por par (paciente, medicamento).
+- Movimentacao de Medicamento do Paciente (`PatientMedicineMovement`): registro de entrada, saida, ajuste ou devolucao do saldo de um `PatientMedicine`, incluindo a baixa automatica gerada ao marcar uma dose como aplicada.
 
 ## Termos Tecnicos
 - DTO: objeto de transporte de dados entre camadas.

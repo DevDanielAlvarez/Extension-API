@@ -7,6 +7,7 @@ use App\Models\MedicationAdministration;
 use App\Models\Medicine;
 use App\Models\Patient;
 use App\Models\PrescriptionSchedule;
+use App\Services\MedicationAdministration\MedicationAdministrationService;
 use Filament\Actions\Action;
 use Filament\Notifications\Notification;
 use Filament\Support\Icons\Heroicon;
@@ -15,6 +16,7 @@ use Filament\Tables\Filters\Filter;
 use Filament\Tables\Table;
 use Filament\Widgets\TableWidget;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Validation\ValidationException;
 
 class TodayMedicationsTable extends TableWidget
 {
@@ -124,10 +126,17 @@ class TodayMedicationsTable extends TableWidget
                     ->color('success')
                     ->visible(fn (PrescriptionSchedule $record): bool => blank($record->administration_applied_at))
                     ->action(function (PrescriptionSchedule $record) use ($today): void {
-                        MedicationAdministration::updateOrCreate(
-                            ['prescription_schedule_id' => $record->id, 'scheduled_date' => $today->toDateString()],
-                            ['applied_at' => now(), 'applied_by_user_id' => auth()->id()],
-                        );
+                        try {
+                            MedicationAdministrationService::markApplied($record, $today, auth()->id());
+                        } catch (ValidationException $e) {
+                            Notification::make()
+                                ->title(__('Could not mark dose as applied'))
+                                ->body(collect($e->errors())->flatten()->implode(' '))
+                                ->danger()
+                                ->send();
+
+                            return;
+                        }
 
                         Notification::make()
                             ->title(__('Dose marked as applied'))
@@ -143,10 +152,7 @@ class TodayMedicationsTable extends TableWidget
                     ->modalDescription(__('This will mark the dose as pending again.'))
                     ->visible(fn (PrescriptionSchedule $record): bool => filled($record->administration_applied_at))
                     ->action(function (PrescriptionSchedule $record) use ($today): void {
-                        MedicationAdministration::query()
-                            ->where('prescription_schedule_id', $record->id)
-                            ->where('scheduled_date', $today->toDateString())
-                            ->delete();
+                        MedicationAdministrationService::undoApplied($record, $today, auth()->id());
 
                         Notification::make()
                             ->title(__('Application undone'))

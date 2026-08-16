@@ -2,6 +2,8 @@
 
 Documento consolidado com todas as especificações técnicas e de negócio do projeto. Baseado no código-fonte atual e na documentação em `docs/`.
 
+> **Pendente de regeneração:** `docs/01`, `docs/03`, `docs/04` e `docs/06` já foram atualizados com a nova entidade `PatientMedicine`/`PatientMedicineMovement` (estoque de medicamento por paciente). Este consolidado ainda não reflete essa mudança — regenerar a partir de `docs/` antes de tratá-lo como fonte de verdade.
+
 ---
 
 ## 1. Visão Geral

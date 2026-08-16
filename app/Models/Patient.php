@@ -52,20 +52,28 @@ class Patient extends Model
         return $this->hasMany(StockDonation::class);
     }
 
+    public function patientMedicines(): HasMany
+    {
+        return $this->hasMany(PatientMedicine::class);
+    }
+
     protected static function booted(): void
     {
         static::deleting(function (self $patient): void {
             if ($patient->isForceDeleting()) {
                 $patient->prescriptions()->withTrashed()->get()->each->forceDelete();
+                $patient->patientMedicines()->withTrashed()->get()->each->forceDelete();
 
                 return;
             }
 
             $patient->prescriptions()->delete();
+            $patient->patientMedicines()->delete();
         });
 
         static::restoring(function (self $patient): void {
             $patient->prescriptions()->onlyTrashed()->get()->each->restore();
+            $patient->patientMedicines()->onlyTrashed()->get()->each->restore();
         });
     }
 }

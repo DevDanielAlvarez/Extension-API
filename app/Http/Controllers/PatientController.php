@@ -10,11 +10,13 @@ use App\Enums\DocumentTypeEnum;
 use App\Enums\StockMovementTypeEnum;
 use App\Http\Requests\Patient\CreatePatientFormRequest;
 use App\Http\Requests\Patient\UpdatePatientFormRequest;
+use App\Http\Resources\PatientMedicineResource;
 use App\Http\Resources\PatientResource;
 use App\Http\Resources\PrescriptionResource;
 use App\Http\Resources\ResponsibleResource;
 use App\Http\Resources\StockItemInUseResource;
 use App\Models\Patient;
+use App\Models\PatientMedicine;
 use App\Models\StockItem;
 use App\Models\StockMovement;
 use App\Services\Patient\PatientService;
@@ -206,6 +208,23 @@ class PatientController extends Controller
             });
 
         return StockItemInUseResource::collection($stockItems);
+    }
+
+    /**
+     * Medicines currently owned by the patient, with their real balance.
+     * Unlike stockItems(), this is a persisted, patient-owned balance
+     * (PatientMedicine), not something computed from a movement log.
+     */
+    public function medicines(string $patient)
+    {
+        $patientService = PatientService::find($patient);
+        $patientId = $patientService->getRecord()->id;
+
+        $patientMedicines = PatientMedicine::where('patient_id', $patientId)
+            ->with('medicine')
+            ->get();
+
+        return PatientMedicineResource::collection($patientMedicines);
     }
 
     public function destroy(string $patient)

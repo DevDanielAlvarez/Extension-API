@@ -21,6 +21,8 @@ API Laravel para gestao de pacientes, responsaveis, prescricoes e horarios de me
 - Medicine: medicamento usado na prescricao.
 - StockItem: item de estoque (enxoval do residente ou insumo medico), com saldo atual e estoque minimo.
 - StockMovement: log de entrada/saida/ajuste/devolucao de um StockItem, opcionalmente vinculado a um paciente.
+- PatientMedicine: saldo de um medicamento pertencente a um paciente especifico (a clinica nao mantem estoque proprio de medicamentos, por exigencia legal), com saldo atual e estoque minimo.
+- PatientMedicineMovement: log de entrada/saida/ajuste/devolucao de um PatientMedicine, incluindo a baixa automatica ao aplicar uma dose.
 
 ## Como Ler o Sistema em 30 Minutos
 1. Ler rotas API em `routes/api.php` para entender pontos de entrada.

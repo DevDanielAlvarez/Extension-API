@@ -21,6 +21,8 @@ Todos abaixo com `auth:sanctum`:
 - `/api/roles`
 - `/api/prescriptions`
 - `/api/prescription-schedules`
+- `/api/stock-items`
+- `/api/patient-medicines`
 
 Cada recurso possui rotas extras:
 - `GET /trashed`
@@ -50,6 +52,11 @@ Cada recurso possui rotas extras:
   - `PUT /api/roles/{role}/permissions`
   - `POST /api/roles/{role}/permissions/activate-all`
   - `POST /api/roles/{role}/permissions/disable-all`
+- Estoque de medicamento por paciente (ver `docs/03-fluxos-de-negocio.md`)
+  - `GET /api/patients/{patient}/medicines` — saldo real (persistido) dos medicamentos do paciente
+  - `GET /api/patient-medicines/low-stock`
+  - `GET /api/patient-medicines/{patientMedicine}/movements`
+  - `POST /api/patient-medicines/{patientMedicine}/movements`
 
 ## Paginacao
 Listagens usam pagina padrao com tamanho 10 em diversos controllers (`paginate(10)`).

@@ -36,6 +36,11 @@ class Medicine extends Model
         return $this->hasMany(Prescription::class);
     }
 
+    public function patientMedicines(): HasMany
+    {
+        return $this->hasMany(PatientMedicine::class);
+    }
+
     protected static function booted(): void
     {
         static::deleting(function (self $medicine): void {
