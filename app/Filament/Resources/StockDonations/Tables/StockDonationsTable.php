@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\StockDonations\Tables;
 
 use App\Enums\StockDonationStatusEnum;
+use App\Models\Patient;
 use App\Models\StockDonation;
 use App\Services\StockDonation\StockDonationService;
 use Filament\Actions\Action;
@@ -74,6 +75,12 @@ class StockDonationsTable
                         StockDonationStatusEnum::CANCELLED->value => 'Cancelada',
                     ])
                     ->default(StockDonationStatusEnum::PENDING->value),
+                SelectFilter::make('patient_id')
+                    ->label('Residente')
+                    ->relationship('patient', 'name')
+                    ->getOptionLabelFromRecordUsing(fn (Patient $record): string => $record->name . ' | ' . $record->document_type->value . ': ' . $record->document_number)
+                    ->searchable(['name', 'document_number'])
+                    ->preload(),
             ])
             ->recordActions([
                 Action::make('confirm')

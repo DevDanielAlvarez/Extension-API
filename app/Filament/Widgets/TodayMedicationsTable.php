@@ -109,7 +109,11 @@ class TodayMedicationsTable extends TableWidget
                             ->label(__('Medicine'))
                             ->native(false)
                             ->searchable()
-                            ->options(fn (): array => Medicine::query()->orderBy('name')->pluck('name', 'id')->all()),
+                            ->options(fn (): array => Medicine::query()
+                                ->orderBy('name')
+                                ->get()
+                                ->mapWithKeys(fn (Medicine $medicine): array => [$medicine->id => "{$medicine->name} | {$medicine->strength}"])
+                                ->all()),
                     ])
                     ->query(fn (Builder $query, array $data): Builder => $query->when(
                         $data['medicine_id'] ?? null,

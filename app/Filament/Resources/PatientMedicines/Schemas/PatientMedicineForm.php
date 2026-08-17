@@ -38,7 +38,7 @@ class PatientMedicineForm
                         ->visible(fn (string $operation): bool => $operation === 'create'),
                     Select::make('medicine_id')
                         ->label('Medicamento')
-                        ->options(fn () => Medicine::query()->orderBy('name')->pluck('name', 'id'))
+                        ->options(fn () => self::medicineOptions())
                         ->searchable()
                         ->preload()
                         ->native(false)
@@ -71,7 +71,7 @@ class PatientMedicineForm
         return $schema->components([
             Select::make('medicine_id')
                 ->label('Medicamento')
-                ->options(fn () => Medicine::query()->orderBy('name')->pluck('name', 'id'))
+                ->options(fn () => self::medicineOptions())
                 ->searchable()
                 ->preload()
                 ->native(false)
@@ -85,6 +85,18 @@ class PatientMedicineForm
                 ->required()
                 ->helperText('Depois de criado, o saldo só muda através da aba "Movimentações".'),
         ]);
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    protected static function medicineOptions(): array
+    {
+        return Medicine::query()
+            ->orderBy('name')
+            ->get()
+            ->mapWithKeys(fn (Medicine $medicine): array => [$medicine->id => "{$medicine->name} | {$medicine->strength}"])
+            ->all();
     }
 
     protected static function minimumQuantityField(): TextInput

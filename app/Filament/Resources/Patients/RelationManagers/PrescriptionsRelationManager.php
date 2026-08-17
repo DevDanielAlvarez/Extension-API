@@ -48,8 +48,9 @@ class PrescriptionsRelationManager extends RelationManager
             ->components([
                 Select::make('medicine_id')
                     ->relationship('medicine', 'name')
+                    ->getOptionLabelFromRecordUsing(fn ($record): string => $record->name . ' | ' . $record->strength)
                     ->label(__('Medicine'))
-                    ->searchable()
+                    ->searchable(['name'])
                     ->preload()
                     ->native(false)
                     ->required(),
