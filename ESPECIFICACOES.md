@@ -2,8 +2,6 @@
 
 Documento consolidado com todas as especificações técnicas e de negócio do projeto. Baseado no código-fonte atual e na documentação em `docs/`.
 
-> **Pendente de regeneração:** `docs/01`, `docs/03`, `docs/04` e `docs/06` já foram atualizados com a nova entidade `PatientMedicine`/`PatientMedicineMovement` (estoque de medicamento por paciente). Este consolidado ainda não reflete essa mudança — regenerar a partir de `docs/` antes de tratá-lo como fonte de verdade.
-
 ---
 
 ## 1. Visão Geral
@@ -31,10 +29,12 @@ API em Laravel para gestão de **pacientes**, **responsáveis**, **prescrições
 - **Responsible** — responsável legal/familiar vinculado a pacientes.
 - **Prescription** — prescrição de um medicamento para um paciente, com período de vigência.
 - **PrescriptionSchedule** — agenda da prescrição (dia da semana, horário, quantidade).
-- **Medicine** — medicamento usado na prescrição.
+- **Medicine** — catálogo de medicamento usado na prescrição (nome, dosagem, unidade, via de administração); **não tem saldo próprio** — a clínica não pode manter estoque de medicamentos por exigência legal (ANVISA).
 - **StockItem** — item de estoque (enxoval do residente ou insumo médico), com saldo atual e estoque mínimo. Operado pelo painel Filament (`StockItemResource`, grupo "Estoque") além da API.
 - **StockMovement** — log de entrada/saída/ajuste/devolução de um `StockItem`, opcionalmente vinculado a um paciente.
 - **StockDonation** — registro público (sem autenticação) de alguém trazendo um item para um paciente específico (identificado por CPF); fica `PENDING` até um admin confirmar ou cancelar pelo painel Filament.
+- **PatientMedicine** — saldo real (persistido) de um medicamento pertencente a um paciente específico; sempre o paciente é dono do remédio, nunca a clínica. Um saldo único por par (`patient_id`, `medicine_id`), com saldo atual e estoque mínimo.
+- **PatientMedicineMovement** — log de entrada/saída/ajuste/devolução de um `PatientMedicine`, incluindo a baixa automática gerada ao marcar uma dose de `MedicationAdministration` como aplicada.
 
 ### Convenções de Fluxo
 - **Entrada**: Controller + FormRequest (validação inline em poucos casos, ex. `storePrescription`).
@@ -86,8 +86,13 @@ PATIENT }o--o{ RESPONSIBLE : linked
 PATIENT ||--o{ PRESCRIPTION : has
 PRESCRIPTION ||--o{ PRESCRIPTION_SCHEDULE : schedules
 PRESCRIPTION }o--|| MEDICINE : uses
+PRESCRIPTION ||--o{ MEDICATION_ADMINISTRATION : "via schedule"
 STOCK_ITEM ||--o{ STOCK_MOVEMENT : has
 STOCK_MOVEMENT }o--o| PATIENT : "linked to (optional)"
+PATIENT ||--o{ PATIENT_MEDICINE : owns
+MEDICINE ||--o{ PATIENT_MEDICINE : "balance of"
+PATIENT_MEDICINE ||--o{ PATIENT_MEDICINE_MOVEMENT : has
+PATIENT_MEDICINE_MOVEMENT }o--o| MEDICATION_ADMINISTRATION : "auto-deduct (optional)"
 ```
 
 ### Decisões Arquiteturais Observadas
@@ -194,6 +199,34 @@ Registra a aplicação de uma dose numa data específica (o `prescription_schedu
 | applied_by_user_id | FK → users, nullable, null on delete | quem aplicou |
 | timestamps | | |
 | único | (prescription_schedule_id, scheduled_date) | evita duplicar a mesma ocorrência |
+
+### `patient_medicines`
+Saldo real de medicamento por paciente. A clínica não mantém estoque próprio de medicamentos por exigência legal — quem é dono do remédio é sempre o paciente.
+
+| Campo | Tipo | Observações |
+|---|---|---|
+| id | ulid, PK | |
+| patient_id | FK → patients, cascade on delete | |
+| medicine_id | FK → medicines, cascade on delete | |
+| current_quantity | integer | default `0`; saldo atual, só muda via `patient_medicine_movements`, não editável em `PUT`/`PATCH` |
+| minimum_quantity | integer, nullable | usado para sinalizar estoque baixo |
+| timestamps / soft delete | | |
+| único | (patient_id, medicine_id) | um saldo por par paciente + medicamento |
+
+### `patient_medicine_movements`
+Log operacional de entrada/saída/ajuste/devolução do saldo de um `PatientMedicine`. Sem soft delete, mesmo padrão de `medication_administrations`/`stock_movements`.
+
+| Campo | Tipo | Observações |
+|---|---|---|
+| id | ulid, PK | |
+| patient_medicine_id | FK → patient_medicines, cascade on delete | |
+| type | string | enum `StockMovementTypeEnum` (reaproveitado do estoque de insumos) |
+| quantity | integer | efeito no saldo depende de `type` |
+| medication_administration_id | FK → medication_administrations, nullable, null on delete | preenchido quando a movimentação é a baixa automática de uma dose aplicada |
+| user_id | FK → users, nullable, null on delete | quem registrou (do usuário autenticado) |
+| notes | text, nullable | |
+| movement_date | datetime | |
+| timestamps | | sem soft delete |
 
 ### `stock_items`
 | Campo | Tipo | Observações |
@@ -302,7 +335,7 @@ Todos protegidos por `auth:sanctum`. Cada recurso abaixo segue o padrão `apiRes
 - `POST /{recurso}/{id}/restore`
 - `DELETE /{recurso}/{id}/force-delete`
 
-Recursos: `users`, `patients`, `responsibles`, `medicines`, `roles`, `prescriptions`, `prescription-schedules`, `stock-items`.
+Recursos: `users`, `patients`, `responsibles`, `medicines`, `roles`, `prescriptions`, `prescription-schedules`, `stock-items`, `patient-medicines`.
 
 ### Movimentações e Consultas de Estoque
 | Método | Rota | Descrição |
@@ -311,6 +344,14 @@ Recursos: `users`, `patients`, `responsibles`, `medicines`, `roles`, `prescripti
 | GET | `/api/stock-items/{stockItem}/movements` | Histórico de movimentações do item |
 | POST | `/api/stock-items/{stockItem}/movements` | Registra movimentação (`IN`/`OUT`/`ADJUSTMENT`/`RETURNED`) |
 | GET | `/api/patients/{patient}/stock-items` | Itens de enxoval atualmente em uso pelo paciente (calculado a partir de `stock_movements`) |
+
+### Movimentações e Consultas de Estoque de Medicamento do Paciente
+| Método | Rota | Descrição |
+|---|---|---|
+| GET | `/api/patient-medicines/low-stock` | Saldos com `current_quantity <= minimum_quantity` |
+| GET | `/api/patient-medicines/{patientMedicine}/movements` | Histórico de movimentações do saldo |
+| POST | `/api/patient-medicines/{patientMedicine}/movements` | Registra movimentação (`IN`/`OUT`/`ADJUSTMENT`/`RETURNED`) |
+| GET | `/api/patients/{patient}/medicines` | Saldo real (persistido) dos medicamentos do paciente |
 
 ### Permissions (somente leitura/gestão pontual, sem `store`/`update` genéricos)
 | Método | Rota | Descrição |
@@ -467,6 +508,28 @@ PC-->>C: 201 + PrescriptionResource
 
 Detalhamento completo em `docs/09-controle-de-estoque.md`.
 
+### 6.6 Estoque de Medicamento do Paciente
+
+Diferente do estoque de insumos/enxoval (Fluxo 6.5), a clínica **não pode manter estoque próprio de medicamentos** por exigência legal — quem é dono dos remédios é sempre o paciente. `PatientMedicine` guarda esse saldo real (persistido) por par (paciente, medicamento), com log de movimentações em `PatientMedicineMovement` (mesmos tipos `IN`/`OUT`/`ADJUSTMENT`/`RETURNED` do estoque de insumos, via `StockMovementTypeEnum` reaproveitado).
+
+- **Entrada:**
+  - `POST /api/patient-medicines` — cria o saldo inicial de um medicamento para um paciente (`patient_id`, `medicine_id`, `current_quantity?`, `minimum_quantity?`).
+  - `POST /api/patient-medicines/{patientMedicine}/movements` — registra uma movimentação (`type`, `quantity`, `notes?`, `movement_date?`).
+- **Regras:**
+  - Saldo único por par (`patient_id`, `medicine_id`).
+  - `IN`/`RETURNED` somam ao saldo; `OUT` subtrai; `ADJUSTMENT` define o saldo diretamente — mesma lógica de `StockItemService`/`StockMovementService`, aplicada por `PatientMedicineService`/`PatientMedicineMovementService`.
+  - Saldo nunca pode ficar negativo (`422` em `quantity` caso contrário).
+  - `current_quantity` só muda através de movimentações, nunca via `PATCH /api/patient-medicines/{id}` (que só altera `minimum_quantity`).
+- **Baixa automática na aplicação de dose:** ao marcar uma dose como aplicada (`TodayMedicationsTable` no painel Filament), `MedicationAdministrationService::markApplied` roda em transação:
+  1. Garante (cria se preciso, com saldo zerado) o `PatientMedicine` do par (paciente, medicamento) da prescrição.
+  2. Cria/atualiza o `MedicationAdministration` do dia.
+  3. Registra uma movimentação `OUT` de `PatientMedicineMovement` com a `quantity` da `PrescriptionSchedule`, referenciando a administração.
+
+  Se o paciente não tiver saldo suficiente daquele medicamento, a aplicação da dose é **bloqueada** (erro de validação) — é preciso registrar uma entrada (`IN`) antes. Desfazer a aplicação (`undoApplied`) estorna a quantidade com uma movimentação `RETURNED` e remove o `MedicationAdministration`.
+- **Erros esperados:** `422` para validação, saldo insuficiente ou saldo duplicado (mesmo paciente + medicamento); `401` sem token.
+
+Detalhamento completo em `docs/03-fluxos-de-negocio.md` (Fluxo 6).
+
 ---
 
 ## 7. Autorização
@@ -489,6 +552,7 @@ Implementação principal em `app/Policies/Traits/CheckPermissionTrait.php`:
 - `RolePolicy` → `PermissionScreenEnum::ROLES_SCREEN`
 - `MedicinePolicy`, `ResponsiblePolicy`, `UserPolicy` seguem o mesmo padrão para suas telas.
 - `StockItemPolicy`, `StockMovementPolicy` e `StockDonationPolicy` → `PermissionScreenEnum::STOCK_SCREEN` (uma única tela cobre cadastro de itens, movimentações e validação de doações).
+- `PatientMedicinePolicy` → `PermissionScreenEnum::MEDICINES_SCREEN` (reaproveita a mesma tela de medicamentos, sem `screen` dedicada para o saldo por paciente).
 
 **Nota:** como as demais Policies do projeto, nenhum controller da API chama `$this->authorize()` ou usa middleware `can:` — a única barreira efetiva nas rotas `api/*` é `auth:sanctum`. As Policies existem para autorização automática caso um recurso Filament seja adicionado depois.
 
@@ -511,10 +575,12 @@ Ações avaliadas: `listar`, `exibir`, `criar`, `atualizar`, `deletar`, `restaur
 - **Responsável**: pessoa vinculada ao paciente para suporte legal/familiar.
 - **Prescrição**: orientação de uso de medicamento para um paciente em um período.
 - **Agenda da Prescrição**: detalhe recorrente de administração (dia da semana, horário e quantidade).
-- **Medicamento**: item farmacêutico usado na prescrição.
+- **Medicamento**: item farmacêutico do catálogo (nome, dosagem, unidade, via de administração), usado na prescrição; não tem saldo próprio — quem tem estoque é sempre o paciente.
 - **Item de Estoque**: item de enxoval do residente (ex.: travesseiro, edredom) ou insumo médico (ex.: agulha, seringa) com saldo controlado.
 - **Movimentação de Estoque**: registro de entrada, saída, ajuste de inventário ou devolução de um item de estoque.
 - **Doação de Item**: registro público de alguém trazendo um item para um paciente específico, pendente de confirmação por um admin.
+- **Medicamento do Paciente (`PatientMedicine`)**: saldo de um medicamento pertencente a um paciente específico (nunca à clínica, por exigência legal). Um saldo por par (paciente, medicamento).
+- **Movimentação de Medicamento do Paciente (`PatientMedicineMovement`)**: registro de entrada, saída, ajuste ou devolução do saldo de um `PatientMedicine`, incluindo a baixa automática gerada ao marcar uma dose como aplicada.
 
 ### Termos Técnicos
 - **DTO**: objeto de transporte de dados entre camadas.
@@ -581,6 +647,9 @@ Suíte Pest (`tests/Feature`, `tests/Unit`) cobrindo:
 - `ModelServiceDeleteTest` — regras de cascata de soft delete/restore/force delete.
 - `StockItemControllerTest` — CRUD, saldo não editável via update, estoque baixo, soft delete/restore/force-delete.
 - `StockMovementControllerTest` — efeito de cada `type` no saldo, saldo insuficiente, exigência de lote/validade, exigência de paciente para itens de residente, itens em uso por paciente.
+- `PatientMedicineControllerTest` — CRUD do saldo por paciente, unicidade (paciente, medicamento), saldo não editável via update, estoque baixo, soft delete/restore/force-delete.
+- `PatientMedicineMovementControllerTest` — efeito de cada `type` no saldo, saldo insuficiente, histórico de movimentações.
+- `MedicationAdministrationServiceTest`, `MedicationAdministrationTest` — baixa automática de `PatientMedicine` ao aplicar dose, bloqueio por saldo insuficiente, estorno ao desfazer aplicação.
 
 ---
 
@@ -612,4 +681,4 @@ tests/                 # Suíte Pest (Feature/Unit)
 
 ---
 
-*Documento gerado a partir do estado atual do repositório (`docs/01-visao-geral.md` a `docs/06-glossario.md`, `README.md`, `routes/api.php`, migrations, enums e `composer.json`/`package.json`).*
+*Documento gerado a partir do estado atual do repositório (`docs/01-visao-geral.md` a `docs/09-controle-de-estoque.md`, `README.md`, `routes/api.php`, migrations, enums e `composer.json`/`package.json`).*
